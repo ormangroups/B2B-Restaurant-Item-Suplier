@@ -5,18 +5,18 @@ const Footer = () => {
         {/* Company Info */}
         <div>
           <h3 className="font-bold text-lg mb-2">Company</h3>
-          <p>Zomato Hyperpure Private Limited</p>
-          <p>Ground Floor, 12A, 94 Meghdoot, Nehru Place,</p>
-          <p>New Delhi - 110019</p>
-          <p>CIN: U74900DL2015PTC286208</p>
+          <img src="https://i.imgur.com/nCjPRTB.png" alt="Hyperpure logo" className="h-9 max-w-full  transition-transform duration-300 ease-in-out transform hover:scale-110" />
+
+          <p>A-12, Aurobindo residency,Gothapatna,<br /> Bhubaneswar, 751029</p>
+          
           <div className="mt-4 space-y-2">
             <div className="flex items-center space-x-2">
               <span className="text-red-500">📞</span>
-              <p>011-41171717</p>
+              <p>+91 89846 91474</p>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-red-500">📧</span>
-              <p>help@hyperpure.com</p>
+              <p>ormangroupindia@gmail.com</p>
             </div>
           </div>
         </div>
@@ -89,11 +89,9 @@ const Footer = () => {
 
       {/* Bottom Section */}
       <div className="mt-8 border-t border-gray-200 pt-4 text-center text-gray-500">
-        <p>
-          <span className="italic text-sm">fssai License No. 10020064002537</span>
-        </p>
+        
         <p className="mt-2">
-          Copyright © Hyperpure All Rights Reserved
+          Copyright © ORMAN INDIA GROUP All Rights Reserved
         </p>
       </div>
     </footer>
