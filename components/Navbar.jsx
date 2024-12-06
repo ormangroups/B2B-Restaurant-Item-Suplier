@@ -39,7 +39,7 @@ function Navbar({ isLoggedIn }) {
         {/* Left: Brand Logo or Name */}
         <div className="">
         <Link href={"/"}>
-        <img src="https://i.imgur.com/nCjPRTB.png" alt="Hyperpure logo" className="h-9 md:h-10 lg:h-10 max-w-full h-auto transition-transform duration-300 ease-in-out transform hover:scale-110" />
+        <img src="https://i.imgur.com/nCjPRTB.png" alt="Hyperpure logo" className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110" />
         </Link> 
         
                             

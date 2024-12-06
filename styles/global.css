@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  button {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: capitalize;
+    cursor: pointer;
+  }
+  
+  h2 {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  h4 {
+    font-size: 14px;
+  }
+  

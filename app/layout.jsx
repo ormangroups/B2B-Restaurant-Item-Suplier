@@ -9,7 +9,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Navbar isLoggedIn={isLoggedIn}/>
-        <div className="mt-20 h-screen">
+        <div className="mt-20 min-h-screen">
         {children}
         </div>
         
