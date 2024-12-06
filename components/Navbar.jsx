@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { FaShoppingCart, FaHeart, FaBell, FaUser, FaTimes } from "react-icons/fa";
+import {  FaWallet, FaHistory, FaSignOutAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import "../styles/global.css"
@@ -23,6 +24,9 @@ function Navbar({ isLoggedIn }) {
   };
   const openCart = () => {
     router.push("/main/cart");
+  };
+  const gotomain = () => {
+    router.push("/main");
   };
   const openFavorite = () => {
     router.push("/main/favorities");
@@ -57,7 +61,7 @@ function Navbar({ isLoggedIn }) {
           // If user is logged in, show navigation buttons
           <div className="hidden lg:flex space-x-8">
             <button
-              onClick={() => handleButtonClick("shop")}
+              onClick={() => {handleButtonClick("shop");gotomain()}}
               className={`flex items-center space-x-2 ${
                 activeButton === "shop" ? "text-red-500" : "text-gray-700"
               } hover:text-red-500`}
@@ -121,7 +125,7 @@ function Navbar({ isLoggedIn }) {
       {isLoggedIn && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden">
           <button
-            onClick={() => handleButtonClick("shop")}
+            onClick={() => {handleButtonClick("shop");gotomain()}}
             className={`flex flex-col items-center ${
               activeButton === "shop" ? "text-red-500" : "text-gray-700"
             } hover:text-red-500`}
@@ -183,33 +187,47 @@ function Navbar({ isLoggedIn }) {
       {/* Full-Screen Menu */}
       {menuOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-20 flex justify-center items-center">
-          <div className="relative bg-white w-4/5 h-4/5 rounded-lg shadow-lg overflow-hidden">
+          {/* Modal Container */}
+          <div className="relative bg-white w-4/5 h-4/5 md:w-1/2 md:h-3/4 rounded-lg shadow-lg overflow-hidden">
+            {/* Close Button */}
             <button
               className="absolute top-4 right-4 text-gray-700"
               onClick={toggleMenu}
             >
-              <FaTimes className="text-2xl hover:text-red-500" />
+              <FaTimes className="text-3xl hover:text-red-500 transition duration-200" />
             </button>
+            {/* Menu Content */}
             <div className="p-6">
-              <h2 className="text-xl font-bold mb-6">Menu</h2>
-              <ul className="space-y-4">
-                <li className="text-gray-700 cursor-pointer hover:text-red-500">
-                  Outlet Information (editable)
+              {/* Title */}
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                <span className="text-red-500">Quick</span> Menu
+              </h2>
+              {/* Menu Items */}
+              <ul className="space-y-6">
+                {/* Outlet Information */}
+                <li className="flex items-center text-gray-700 text-lg font-medium cursor-pointer hover:text-red-500 transition duration-200">
+                  <FaUser className="mr-4 text-xl" />
+                  <Link href="/main/profile">Outlet Information</Link>
                 </li>
-                <li className="text-gray-700 cursor-pointer hover:text-red-500">
-                  Payment Settlement
+                {/* Payment Settlement */}
+                <li className="flex items-center text-gray-700 text-lg font-medium cursor-pointer hover:text-red-500 transition duration-200">
+                  <FaWallet className="mr-4 text-xl" />
+                  <Link href="/main/payments">Payment Settlement</Link>
                 </li>
-                <li className="text-gray-700 cursor-pointer hover:text-red-500">
-                  Order History (current and previous)
+                {/* Order History */}
+                <li className="flex items-center text-gray-700 text-lg font-medium cursor-pointer hover:text-red-500 transition duration-200">
+                  <FaHistory className="mr-4 text-xl" />
+                  <Link href="/main/orders">Order History</Link>
                 </li>
-                <li className="text-gray-700 cursor-pointer hover:text-red-500">
-                  Logout
+                {/* Logout */}
+                <li className="flex items-center text-gray-700 text-lg font-medium cursor-pointer hover:text-red-500 transition duration-200">
+                  <FaSignOutAlt className="mr-4 text-xl" />
+                  <Link href="/">Logout</Link>
                 </li>
               </ul>
             </div>
           </div>
-        </div>
-      )}
+        </div>)}
     </div>
   );
 }
