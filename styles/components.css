@@ -1,20 +1,137 @@
-/* main/favorites/favorites.module.css */
-.favorite-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin: 10px 0;
-    border-radius: 8px;
+/* Container for all favorite items */
+.favorites-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Card for each favorite item */
+.favorite-item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.favorite-item-card:hover {
+  transform: translateY(-5px);
+}
+
+.favorite-item-details {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Image styling */
+.favorite-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Title and description */
+.favorite-item-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.favorite-item-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Button styling */
+.remove-favorite-button {
+  padding: 10px 20px;
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-favorite-button:hover {
+  background-color: #c53030;
+}
+
+/* Add to Cart Section */
+.add-to-cart-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-input {
+  width: 50px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.add-to-cart-button {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-button:hover {
+  background-color: #45a049;
+}
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Grid layout for responsiveness */
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+/* Image */
+img {
+  border-radius: 8px;
+}
+
+/* Quantity Buttons */
+button {
+  transition: background-color 0.2s;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
-  
-  .favorite-item button {
-    padding: 5px 10px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
+}
+
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

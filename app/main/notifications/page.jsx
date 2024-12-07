@@ -33,34 +33,48 @@ const notifications = [
 
 const Notifications = () => {
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-100">
-      <div className="bg-white shadow-md p-4 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Notifications</h2>
-        <button className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+    <div className="h-screen w-screen bg-gray-50 flex flex-col">
+      {/* Header */}
+      <div className="bg-white shadow-lg p-4 flex justify-between items-center sticky top-0 z-10">
+        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
+        <button
+          className="text-gray-400 hover:text-gray-600 text-2xl transition-transform transform hover:rotate-90"
+          aria-label="Close"
+        >
+          &times;
+        </button>
       </div>
-      <div className="flex-1 overflow-y-auto">
+
+      {/* Notification List */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className="flex items-start p-4 border-b hover:bg-gray-50"
+            className="flex items-start p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300"
           >
+            {/* Icon */}
             <img
               src={notification.icon}
               alt="icon"
-              className="w-12 h-12 rounded-full mr-4"
+              className="w-14 h-14 rounded-full object-cover mr-4 border-2 border-gray-200"
             />
+            {/* Content */}
             <div className="flex-1">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-800 mb-1">
                 {notification.title}
               </h3>
-              <p className="text-sm text-gray-600">{notification.description}</p>
+              <p className="text-sm text-gray-600 mb-2">
+                {notification.description}
+              </p>
               <span className="text-xs text-gray-400">{notification.time}</span>
             </div>
           </div>
         ))}
       </div>
-      <div className="bg-white p-4 text-center text-gray-500 text-sm">
-        All notifications viewed
+
+      {/* Footer */}
+      <div className="bg-white shadow-md p-4 text-center text-gray-500 text-sm">
+        You’re all caught up! 🎉
       </div>
     </div>
   );
