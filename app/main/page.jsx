@@ -7,20 +7,20 @@ const MainSection = () => {
   const categories = [
     {
       title: "Fruits & Vegetables",
+      constantPrice: 50, // Constant price for this category
       products: [
         { id: 1, name: "Indian Vegetables", image: "https://via.placeholder.com/100" },
         { id: 2, name: "Tomato, Onion, Potato", image: "https://via.placeholder.com/100" },
         { id: 3, name: "Exotic Vegetables", image: "https://via.placeholder.com/100" },
-        { id: 4, name: "Leafy Vegetables", image: "https://via.placeholder.com/100" },
       ],
     },
     {
       title: "Dairy",
+      constantPrice: null, // Variable price for each product
       products: [
-        { id: 1, name: "Cream", image: "https://via.placeholder.com/100" },
-        { id: 2, name: "Butter", image: "https://via.placeholder.com/100" },
-        { id: 3, name: "Milk & Milk Powder", image: "https://via.placeholder.com/100" },
-        { id: 4, name: "Cheese", image: "https://via.placeholder.com/100" },
+        { id: 4, name: "Cream", price: 100, image: "https://via.placeholder.com/100" },
+        { id: 5, name: "Butter", price: 150, image: "https://via.placeholder.com/100" },
+        { id: 6, name: "Cheese", price: 200, image: "https://via.placeholder.com/100" },
       ],
     },
   ];
@@ -30,11 +30,12 @@ const MainSection = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="p-6 bg-gray-100">
       {categories.map((category, index) => (
         <CategorySection
           key={index}
           title={category.title}
+          constantPrice={category.constantPrice}
           products={category.products}
           onSeeAll={() => handleSeeAll(category.title)}
         />
