@@ -3,7 +3,7 @@ import { FaFacebook, FaInstagram, FaTwitter, FaGithub, FaYoutube } from "react-i
 
 const Footer = () => {
   return (
-    <footer className="text-center py-8 bg-gray-100">
+    <footer className="text-center py-8 bg-gray-100 hidden lg:block">
       {/* Links Section */}
       <div className="mb-4 flex justify-center flex-wrap">
         <a href="#" className="mx-2 text-gray-600 hover:text-gray-800">
