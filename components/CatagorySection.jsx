@@ -141,7 +141,7 @@ const CategorySection = ({ title, constantPrice, products, onSeeAll }) => {
               </div>
 
               {/* Add to Cart Button */}
-              <button className="mt-4 bg-green-600 text-white py-2 px-6 rounded-full w-full text-center">
+              <button className="mt-4 bg-red-500 text-white py-2 px-6 rounded-full w-full text-center">
                 Add to Cart
               </button>
             </div>

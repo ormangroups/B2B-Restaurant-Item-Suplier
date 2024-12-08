@@ -37,13 +37,13 @@ function Navbar({ isLoggedIn }) {
 
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-10">
+    <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
       {/* Navbar for All Devices */}
       <div className="flex justify-between items-center px-6 py-4">
         {/* Left: Brand Logo or Name */}
         <div className="">
         <Link href={"/"}>
-        <img src="https://i.imgur.com/nCjPRTB.png" alt="Hyperpure logo" className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110" />
+        <img src="https://i.imgur.com/nCjPRTB.png" alt="Orman logo" className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110" />
         </Link> 
         
                             

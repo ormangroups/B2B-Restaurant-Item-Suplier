@@ -1,9 +1,14 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import { FaDollarSign, FaSyncAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import {
+  FaDollarSign,
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaArrowRight,
+} from "react-icons/fa";
 
 const PaymentSettlement = () => {
-  // Example payment history data
+  // Payment history data
   const [paymentHistory] = useState([
     { id: 1, date: "2024-12-01", amount: 500, status: "Paid" },
     { id: 2, date: "2024-12-05", amount: 1200, status: "Pending" },
@@ -11,67 +16,101 @@ const PaymentSettlement = () => {
     { id: 4, date: "2024-12-10", amount: 950, status: "Pending" },
   ]);
 
-  // Calculate the total settlement
-  const totalAmount = paymentHistory.reduce((acc, payment) => acc + payment.amount, 0);
+  // Calculate pending and paid totals
+  const totalPaid = paymentHistory
+    .filter((payment) => payment.status === "Paid")
+    .reduce((acc, payment) => acc + payment.amount, 0);
 
-  // Simulate settlement request action
+  const totalPending = paymentHistory
+    .filter((payment) => payment.status === "Pending")
+    .reduce((acc, payment) => acc + payment.amount, 0);
+
+  // Simulate settlement request
   const handleRequestSettlement = () => {
     alert("Settlement request sent successfully!");
-    // Add logic to trigger settlement API here
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <div className="w-full max-w-5xl bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Payment Settlement</h1>
+    <div className="min-h-screen bg-gradient-to-r from-gray-100 to-gray-200 flex flex-col items-center py-10 px-4">
+      <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 md:p-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          Payment Settlement
+        </h1>
 
-        {/* Total Settlement Section */}
-        <div className="mb-6 flex items-center justify-between bg-gray-100 p-4 rounded-md">
-          <div className="flex items-center">
-            <FaDollarSign className="text-green-500 text-2xl mr-4" />
-            <p className="text-lg text-gray-800 font-medium">
-              Total Settlement Amount:{" "}
-              <span className="text-green-500 font-bold">${totalAmount}</span>
-            </p>
+        {/* Summary Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Paid Section */}
+          <div className="bg-green-100 rounded-lg p-6 shadow hover:shadow-lg transition">
+            <div className="flex items-center mb-4">
+              <FaDollarSign className="text-green-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-bold text-gray-700">Total Paid</h2>
+                <p className="text-2xl font-bold text-green-600">${totalPaid}</p>
+              </div>
+            </div>
           </div>
-          <button
-            onClick={handleRequestSettlement}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition duration-200"
-          >
-            Request Settlement
-          </button>
+
+          {/* Pending Section */}
+          <div className="bg-yellow-100 rounded-lg p-6 shadow hover:shadow-lg transition">
+            <div className="flex items-center mb-4">
+              <FaExclamationCircle className="text-yellow-500 text-3xl mr-4" />
+              <div>
+                <h2 className="text-lg font-bold text-gray-700">
+                  Total Pending
+                </h2>
+                <p className="text-2xl font-bold text-yellow-600">
+                  ${totalPending}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleRequestSettlement}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition duration-200 w-full"
+            >
+              Request Settlement
+            </button>
+          </div>
         </div>
 
-        {/* Payment History Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-300 px-4 py-2 text-left text-gray-700">Date</th>
-                <th className="border border-gray-300 px-4 py-2 text-left text-gray-700">Amount ($)</th>
-                <th className="border border-gray-300 px-4 py-2 text-left text-gray-700">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paymentHistory.map((payment) => (
-                <tr key={payment.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">{payment.date}</td>
-                  <td className="border border-gray-300 px-4 py-2">{payment.amount}</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {payment.status === "Paid" ? (
-                      <span className="flex items-center text-green-500">
-                        <FaCheckCircle className="mr-2" /> {payment.status}
-                      </span>
-                    ) : (
-                      <span className="flex items-center text-yellow-500">
-                        <FaSyncAlt className="mr-2" /> {payment.status}
-                      </span>
-                    )}
-                  </td>
+        {/* Payment History Section */}
+        <div className="overflow-hidden bg-white rounded-lg shadow-lg">
+          <h2 className="bg-gray-100 p-4 text-lg font-bold text-gray-700">
+            Payment History
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50 border-b">
+                  <th className="px-4 py-2 text-gray-600">Date</th>
+                  <th className="px-4 py-2 text-gray-600">Amount ($)</th>
+                  <th className="px-4 py-2 text-gray-600">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {paymentHistory.map((payment) => (
+                  <tr
+                    key={payment.id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="px-4 py-3">{payment.date}</td>
+                    <td className="px-4 py-3">${payment.amount}</td>
+                    <td className="px-4 py-3">
+                      {payment.status === "Paid" ? (
+                        <span className="flex items-center text-green-600 font-medium">
+                          <FaCheckCircle className="mr-2" /> {payment.status}
+                        </span>
+                      ) : (
+                        <span className="flex items-center text-yellow-600 font-medium">
+                          <FaExclamationCircle className="mr-2" />{" "}
+                          {payment.status}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
