@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const RestaurantRegistrationPage = () => {
+const EditRestaurantPage = ({ params }) => {
+  const { id } = params; // Restaurant ID from the URL
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -12,6 +13,17 @@ const RestaurantRegistrationPage = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // Simulated fetch for restaurant data
+    // Replace this with an API call
+    setFormData({
+      email: `restaurant${id}@example.com`,
+      password: "defaultpassword",
+      ownerName: `Owner ${id}`,
+      contactNumber: "123-456-7890",
+    });
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,14 +39,13 @@ const RestaurantRegistrationPage = () => {
     setMessage(null);
 
     try {
-      // Simulate an API call for registration
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace this with your actual API call
+      // Simulate API call for updating restaurant details
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual API call
 
-      setMessage({ type: "success", text: "Restaurant registered successfully!" });
-      setFormData({ email: "", password: "", ownerName: "", contactNumber: "" });
+      setMessage({ type: "success", text: "Restaurant details updated successfully!" });
 
-      // Redirect to admin restaurant list after successful registration
-      router.push("/admin/restaurants");
+      // Redirect to restaurant details page after successful update
+      router.push(`/admin/restaurants/${id}`);
     } catch (error) {
       setMessage({ type: "error", text: "An error occurred. Please try again." });
     } finally {
@@ -44,7 +55,7 @@ const RestaurantRegistrationPage = () => {
 
   return (
     <div className="container mx-auto p-6 max-w-lg">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Register Restaurant</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Restaurant</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-lg p-6 space-y-6"
@@ -116,16 +127,25 @@ const RestaurantRegistrationPage = () => {
             required
           />
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition disabled:opacity-50"
-        >
-          {loading ? "Registering..." : "Register Restaurant"}
-        </button>
+        <div className="flex justify-between items-center">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 transition disabled:opacity-50"
+          >
+            {loading ? "Updating..." : "Update Details"}
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push(`/admin/restaurants/${id}`)}
+            className="bg-gray-500 text-white py-3 px-6 rounded-md hover:bg-gray-600 transition"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default RestaurantRegistrationPage;
+export default EditRestaurantPage;

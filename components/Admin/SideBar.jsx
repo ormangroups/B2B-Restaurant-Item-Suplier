@@ -5,7 +5,7 @@ import { FaHome, FaUtensils, FaTags, FaClipboardList, FaBell, FaChartPie, FaCog 
 const Sidebar = () => {
   
   return (
-    <aside className="w-64 bg-indigo-600 text-white flex flex-col">
+    <aside className="w-64  min-h-screen bg-indigo-600 text-white flex flex-col">
       <div className="flex items-center justify-center h-16">
         <i className="fas fa-wave-square text-3xl"></i>
       </div>
