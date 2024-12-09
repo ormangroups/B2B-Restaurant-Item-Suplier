@@ -30,7 +30,8 @@ const MainSection = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100">
+    <div className="p-6 bg-gray-50">
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">Product Categories</h1>
       {categories.map((category, index) => (
         <CategorySection
           key={index}

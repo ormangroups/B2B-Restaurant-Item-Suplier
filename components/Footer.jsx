@@ -47,7 +47,7 @@ const Footer = () => {
 
       {/* Copyright Section */}
       <div className="text-gray-600">
-        © 2024 Your Company, Inc. All rights reserved.
+        © 2024 ORMAN INDIA GROUPS PTV. All rights reserved.
       </div>
     </footer>
   );
