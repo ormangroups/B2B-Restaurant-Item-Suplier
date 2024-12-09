@@ -1,5 +1,6 @@
 import React from 'react'
 import "../styles/global.css"
+import { CiUser } from "react-icons/ci";
 function page() {
   const stats = [
     { label: "Restaurants Served", value: "5,000+" },
@@ -89,11 +90,7 @@ function page() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="p-4">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="rounded-full w-32 h-32 mx-auto mb-4"
-                />
+               <CiUser />
                 <h3 className="text-lg font-bold">{member.name}</h3>
                 <p>{member.role}</p>
               </div>
