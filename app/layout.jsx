@@ -1,17 +1,19 @@
-"use client";
+
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { useState } from "react";
 
+export const metadata = {
+  
+  title: 'OrmanIndia',
+  description: 'This Is the Home Page of OrmanIndia ',
+}
 export default function RootLayout({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+ 
   return (
     <html lang="en">
-      <head>
-      <meta name="google-site-verification" content="XvGMussni5fBo2gQnzEMZuxGDxRRA_advRe2Kkmhmm0" />
-      </head>
+      
       <body>
-        <Navbar isLoggedIn={isLoggedIn}/>
+        <Navbar isLoggedIn={true}/>
         <div className="mt-20 min-h-screen">
         {children}
         </div>
