@@ -1,20 +1,32 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "@/app/api/mainapi"; // Assuming Axios instance is in this file
 
 const PaymentPage = ({ params }) => {
   const { id } = params; // Restaurant ID
-  const [pendingAmount, setPendingAmount] = useState(1500); // Initial pending amount
-  const [settlements, setSettlements] = useState([
-    { id: 1, amount: 500, date: "2024-12-01" },
-    { id: 2, amount: 300, date: "2024-12-05" },
-  ]);
-
+  const [restaurant, setRestaurant] = useState(null);
   const [newPayment, setNewPayment] = useState({
     amount: "",
     date: "",
   });
 
-  const handleAddPayment = (e) => {
+  // Fetch restaurant by ID
+  useEffect(() => {
+    const fetchRestaurant = async () => {
+      try {
+        const response = await api.getRestaurantById(id); // Assuming you have an API endpoint to get the restaurant by ID
+        if (response) {
+          setRestaurant(response);
+        }
+      } catch (error) {
+        console.error("Error fetching restaurant:", error);
+      }
+    };
+
+    fetchRestaurant();
+  }, [id]);
+
+  const handleAddPayment = async (e) => {
     e.preventDefault();
     const amount = parseFloat(newPayment.amount);
     const date = newPayment.date;
@@ -24,32 +36,50 @@ const PaymentPage = ({ params }) => {
       return;
     }
 
+    const pendingAmount = restaurant?.pendingAmount || 0;
     if (amount > pendingAmount) {
       alert("Payment amount exceeds the pending amount.");
       return;
     }
 
-    // Update settlements and pending amount
-    setSettlements((prev) => [
-      ...prev,
-      { id: prev.length + 1, amount, date },
-    ]);
-    setPendingAmount((prev) => prev - amount);
+    try {
+      const paymentTransaction = { amount, date };
+      await api.createPaymentTransaction(id, paymentTransaction);
 
-    // Clear the form
-    setNewPayment({ amount: "", date: "" });
+      // Update restaurant payment details
+      setRestaurant((prevRestaurant) => ({
+        ...prevRestaurant,
+        pendingAmount: prevRestaurant.pendingAmount - amount,
+        paidAmount: prevRestaurant.paidAmount + amount,
+        pastSettlements: [
+          ...prevRestaurant.pastSettlements,
+          paymentTransaction,
+        ],
+      }));
+
+      // Clear form
+      setNewPayment({ amount: "", date: "" });
+
+      alert("Payment added successfully!");
+    } catch (error) {
+      console.error("Error adding payment:", error);
+      alert("Failed to add payment.");
+    }
   };
+
+  if (!restaurant) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-8">
-      {/* Page Header */}
       <h1 className="text-3xl font-extrabold text-gray-800">
         Payment Settlement for Restaurant {id}
       </h1>
 
       {/* Pending Amount */}
       <div className="bg-red-100 text-red-800 font-bold text-lg px-6 py-4 rounded-lg shadow">
-        Pending Amount: ${pendingAmount.toFixed(2)}
+        Pending Amount: ${restaurant.pendingAmount}
       </div>
 
       {/* Add New Payment */}
@@ -95,15 +125,15 @@ const PaymentPage = ({ params }) => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Previous Settlements
         </h2>
-        {settlements.length > 0 ? (
+        {restaurant?.pastSettlements?.length > 0 ? (
           <ul className="space-y-4">
-            {settlements.map((settlement) => (
+            {restaurant.pastSettlements.map((settlement, index) => (
               <li
-                key={settlement.id}
+                key={index}
                 className="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
               >
                 <div>
-                  <h3 className="font-bold text-gray-800">${settlement.amount.toFixed(2)}</h3>
+                  <h3 className="font-bold text-gray-800">${settlement.amount}</h3>
                   <span className="text-gray-500 text-sm">{settlement.date}</span>
                 </div>
                 <span className="text-green-600 font-medium">Paid</span>

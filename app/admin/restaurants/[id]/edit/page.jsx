@@ -1,35 +1,49 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";  // Import axios for API calls
+import api from "@/app/api/mainapi";
 
 const EditRestaurantPage = ({ params }) => {
   const { id } = params; // Restaurant ID from the URL
   const [formData, setFormData] = useState({
+    restaurantName: "",
+    restaurantAddress: "",
     email: "",
     password: "",
-    ownerName: "",
     contactNumber: "",
+    isActive: true, // Assuming restaurant is active by default
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const router = useRouter();
 
+  // Fetch restaurant data on page load
   useEffect(() => {
-    // Simulated fetch for restaurant data
-    // Replace this with an API call
-    setFormData({
-      email: `restaurant${id}@example.com`,
-      password: "defaultpassword",
-      ownerName: `Owner ${id}`,
-      contactNumber: "123-456-7890",
-    });
+    const fetchRestaurantData = async () => {
+      try {
+        // Fetch restaurant data by ID
+        const response = await api.getRestaurantById(`${id}`);
+        setFormData({
+          ...response, // Assuming the response data matches the form structure
+        });
+      } catch (err) {
+        console.error("Error fetching restaurant data:", err);
+        setMessage({
+          type: "error",
+          text: "Failed to load restaurant data",
+        });
+      }
+    };
+
+    fetchRestaurantData();
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -39,13 +53,14 @@ const EditRestaurantPage = ({ params }) => {
     setMessage(null);
 
     try {
-      // Simulate API call for updating restaurant details
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual API call
+      // API call to update the restaurant
+      const response = await api.updateRestaurant(`${id}`,formData);
 
-      setMessage({ type: "success", text: "Restaurant details updated successfully!" });
-
-      // Redirect to restaurant details page after successful update
-      router.push(`/admin/restaurants/${id}`);
+      if (response.status === 200) {
+        setMessage({ type: "success", text: "Restaurant details updated successfully!" });
+        // Redirect to restaurant details page after successful update
+        setTimeout(() => router.push(`/admin/restaurants/${id}`), 2000);
+      }
     } catch (error) {
       setMessage({ type: "error", text: "An error occurred. Please try again." });
     } finally {
@@ -55,10 +70,10 @@ const EditRestaurantPage = ({ params }) => {
 
   return (
     <div className="container mx-auto p-6 max-w-lg">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Restaurant</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-6">Edit Restaurant</h1>
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-lg p-6 space-y-6"
+        className="bg-white shadow-lg rounded-lg p-8 space-y-6"
       >
         {message && (
           <div
@@ -71,7 +86,41 @@ const EditRestaurantPage = ({ params }) => {
             {message.text}
           </div>
         )}
-        <div>
+
+        {/* Restaurant Name Field */}
+        <div className="relative">
+          <label htmlFor="restaurantName" className="block text-gray-700 font-medium mb-2">
+            Restaurant Name
+          </label>
+          <input
+            type="text"
+            id="restaurantName"
+            name="restaurantName"
+            value={formData.restaurantName}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            required
+          />
+        </div>
+
+        {/* Restaurant Address Field */}
+        <div className="relative">
+          <label htmlFor="restaurantAddress" className="block text-gray-700 font-medium mb-2">
+            Restaurant Address
+          </label>
+          <input
+            type="text"
+            id="restaurantAddress"
+            name="restaurantAddress"
+            value={formData.restaurantAddress}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            required
+          />
+        </div>
+
+        {/* Email Field */}
+        <div className="relative">
           <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
             Email Address
           </label>
@@ -81,11 +130,13 @@ const EditRestaurantPage = ({ params }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
             required
           />
         </div>
-        <div>
+
+        {/* Password Field */}
+        <div className="relative">
           <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
             Password
           </label>
@@ -95,25 +146,13 @@ const EditRestaurantPage = ({ params }) => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
             required
           />
         </div>
-        <div>
-          <label htmlFor="ownerName" className="block text-gray-700 font-medium mb-2">
-            Owner Name
-          </label>
-          <input
-            type="text"
-            id="ownerName"
-            name="ownerName"
-            value={formData.ownerName}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-        <div>
+
+        {/* Contact Number Field */}
+        <div className="relative">
           <label htmlFor="contactNumber" className="block text-gray-700 font-medium mb-2">
             Contact Number
           </label>
@@ -123,22 +162,46 @@ const EditRestaurantPage = ({ params }) => {
             name="contactNumber"
             value={formData.contactNumber}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
             required
           />
         </div>
+
+        {/* Active Status */}
+        <div className="relative">
+          <label htmlFor="isActive" className="block text-gray-700 font-medium mb-2">
+            Active Status
+          </label>
+          <input
+            type="checkbox"
+            id="isActive"
+            name="isActive"
+            checked={formData.isActive}
+            onChange={handleChange}
+            className="w-4 h-4 rounded-md focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Submit and Cancel Buttons */}
         <div className="flex justify-between items-center">
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 transition disabled:opacity-50"
+            className="bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 transition duration-300 ease-in-out disabled:opacity-50"
           >
-            {loading ? "Updating..." : "Update Details"}
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="w-4 h-4 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+                <span className="ml-2">Updating...</span>
+              </div>
+            ) : (
+              "Update Details"
+            )}
           </button>
           <button
             type="button"
             onClick={() => router.push(`/admin/restaurants/${id}`)}
-            className="bg-gray-500 text-white py-3 px-6 rounded-md hover:bg-gray-600 transition"
+            className="bg-gray-500 text-white py-3 px-6 rounded-md hover:bg-gray-600 transition duration-300 ease-in-out"
           >
             Cancel
           </button>

@@ -1,38 +1,58 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import api from "@/app/api/mainapi"; // Assuming you are using Axios for HTTP requests
 
 const NotificationPage = ({ params }) => {
   const { id } = params; // Restaurant ID
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]); // Initialize as an empty array
   const [notificationForm, setNotificationForm] = useState({
     title: "",
     message: "",
   });
 
+  // Fetch notifications when the component is mounted
   useEffect(() => {
-    // Simulated fetch for notifications
-    setNotifications([
-      { id: 1, title: "Welcome!", message: "Thanks for joining us!", date: "2024-12-01" },
-      { id: 2, title: "Update", message: "Your account has been updated.", date: "2024-12-05" },
-    ]);
-  }, []);
-
-  const handleSendNotification = (e) => {
-    e.preventDefault();
-    const newNotification = {
-      id: notifications.length + 1,
-      title: notificationForm.title,
-      message: notificationForm.message,
-      date: new Date().toISOString().split("T")[0],
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.getNotificationsForUser(id); // Ensure you await the response here
+        if (response ) {
+          setNotifications(response); // Assuming the backend returns notifications as an array
+        } else {
+          setNotifications([]); // If no data is returned, set to empty array
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        setNotifications([]); // Handle errors by setting an empty array
+      }
     };
 
-    // Add the new notification
-    setNotifications((prev) => [newNotification, ...prev]);
+    fetchNotifications();
+  }, [id]);
 
-    // Clear form
-    setNotificationForm({ title: "", message: "" });
+  // Handle sending notifications to the restaurant
+  const handleSendNotification = async (e) => {
+    e.preventDefault();
 
-    alert("Notification sent successfully!");
+    const newNotification = {
+      recipientId: id, // Send to the specific restaurant
+      message: notificationForm.message,
+      isRead: false, // New notification is unread
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      // Send the notification to the backend (ensure this route is available)
+      const response = await api.sendToUser(id, notificationForm.message);
+      setNotifications((prev) => [response.data, ...prev]);
+
+      // Clear the form
+      setNotificationForm({ title: "", message: "" });
+
+      alert("Notification sent successfully!");
+    } catch (error) {
+      console.error("Error sending notification:", error);
+      alert("Failed to send notification.");
+    }
   };
 
   return (
@@ -82,9 +102,9 @@ const NotificationPage = ({ params }) => {
                 key={notification.id}
                 className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
               >
-                <h3 className="font-bold text-gray-800">{notification.title}</h3>
+                
                 <p className="text-gray-600">{notification.message}</p>
-                <span className="text-gray-500 text-sm">{notification.date}</span>
+                <span className="text-gray-500 text-sm">{new Date(notification.timestamp).toLocaleDateString()}</span>
               </li>
             ))}
           </ul>

@@ -1,16 +1,32 @@
 "use client";
 
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite} from "../app/redux/slices/favoritesSlice";
+import {addToCart } from "../app/redux/slices/cartSlice";
+import api from "@/app/api/mainapi";
 import "../styles/global.css";
 
 const CategorySection = ({ title, constantPrice, products, onSeeAll }) => {
-  const [favorites, setFavorites] = useState([]);
+  const dispatch = useDispatch();
+  
+  // Get favorites from Redux store
+  const favorites = useSelector((state) => state.favorites.favorites || []); // Ensure it's always an array
+
   const [selectedQuantity, setSelectedQuantity] = useState({});
 
-  const toggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
-    );
+  const toggleFavorite = async (id) => {
+    try {
+      if (favorites.includes(id)) {
+        await api.removeFavorite(id);
+        dispatch(removeFavorite({ id }));
+      } else {
+        await api.addFavorite(id);
+        dispatch(addFavorite(id));
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error.message);
+    }
   };
 
   const handleQuantityChange = (id, change) => {
@@ -18,6 +34,17 @@ const CategorySection = ({ title, constantPrice, products, onSeeAll }) => {
       ...prev,
       [id]: Math.max(1, (prev[id] || 1) + change),
     }));
+  };
+
+  const handleAddToCart = async (id) => {
+    const quantity = selectedQuantity[id] || 1;
+    try {
+      await api.addToCart(id, quantity);
+      dispatch(addToCart({ id, quantity }));
+      alert("Item added to cart!");
+    } catch (error) {
+      console.error("Failed to add to cart:", error.message);
+    }
   };
 
   return (
@@ -70,47 +97,14 @@ const CategorySection = ({ title, constantPrice, products, onSeeAll }) => {
               <h3 className="text-lg font-medium text-gray-800 truncate">
                 {product.name}
               </h3>
-              {/* Product Tags (SuperSaver, ISO Certified, etc.) */}
-              <div className="flex space-x-2 mt-2">
-                {product.superSaver && (
-                  <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-                    SUPERSAVER
-                  </span>
-                )}
-                {product.isoCertified && (
-                  <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
-                    ISO CERTIFIED
-                  </span>
-                )}
-                {product.bestQuality && (
-                  <span className="bg-pink-600 text-white text-xs px-2 py-1 rounded-full">
-                    BEST QUALITY & YIELD
-                  </span>
-                )}
-              </div>
 
-              {/* Show price */}
+              {/* Price Section */}
               {!constantPrice && product.price && (
                 <p className="text-gray-700 font-semibold mt-2">
-                  ₹{product.price} <span className="text-sm text-gray-500">(per {product.unit})</span>
+                  ₹{product.price}{" "}
+                  <span className="text-sm text-gray-500">(per {product.unit})</span>
                 </p>
               )}
-
-              {/* Price Variants */}
-              {product.priceVariants &&
-                product.priceVariants.map((variant, idx) => (
-                  <div key={idx} className="mt-2">
-                    <p className="text-sm text-gray-600">
-                      ₹{variant.price} for {variant.quantity}
-                    </p>
-                    <button
-                      className="text-blue-500 text-sm hover:text-blue-700 mt-1"
-                      onClick={() => handleQuantityChange(product.id, variant.quantity)}
-                    >
-                      Add {variant.quantity}
-                    </button>
-                  </div>
-                ))}
 
               {/* Add/Quantity Button */}
               <div className="flex items-center mt-4 space-x-2">
@@ -128,7 +122,7 @@ const CategorySection = ({ title, constantPrice, products, onSeeAll }) => {
                   onChange={(e) =>
                     setSelectedQuantity({
                       ...selectedQuantity,
-                      [product.id]: Math.max(1, e.target.value),
+                      [product.id]: Math.max(1, parseInt(e.target.value) || 1),
                     })
                   }
                 />
@@ -141,7 +135,10 @@ const CategorySection = ({ title, constantPrice, products, onSeeAll }) => {
               </div>
 
               {/* Add to Cart Button */}
-              <button className="mt-4 bg-red-500 text-white py-2 px-6 rounded-full w-full text-center">
+              <button
+                onClick={() => handleAddToCart(product.id)}
+                className="mt-4 bg-red-500 text-white py-2 px-6 rounded-full w-full text-center"
+              >
                 Add to Cart
               </button>
             </div>

@@ -1,30 +1,42 @@
-"use client"
+"use client";
+
 import React, { useState } from "react";
 import { FaEdit, FaSave, FaMapMarkerAlt, FaPhone, FaStore, FaEnvelope } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import api from "@/app/api/mainapi"; // Import your API instance
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
-  // Outlet Information State
-  const [outletInfo, setOutletInfo] = useState({
-    name: "Orman Restaurant",
-    address: "123 Main Street, New York, NY",
-    phone: "+1 234 567 890",
-    email: "contact@orman.com",
-  });
+  // Access the restaurant information from Redux state
+  const restaurant = useSelector(state => state.user.restaurant || {});
+  const dispatch = useDispatch();
 
   // Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setOutletInfo({ ...outletInfo, [name]: value });
+    // Update local state for editing
+    setRestaurantInfo({ ...restaurantInfo, [name]: value });
   };
 
   // Handle Save
-  const handleSave = () => {
-    setIsEditing(false);
-    // Save logic (e.g., API call) can be added here
-    console.log("Saved outlet information:", outletInfo);
+  const handleSave = async () => {
+    try {
+      // API call to update the restaurant information
+      await api.updateRestaurant(restaurant); // Adjust the API call as per your backend design
+      alert("Outlet information updated successfully!");
+      setIsEditing(false);
+      // Optionally, dispatch the updated restaurant data to Redux
+      dispatch({ type: 'UPDATE_RESTAURANT', payload: restaurant });
+    } catch (error) {
+      console.error("Failed to update outlet information:", error.message);
+      alert("Failed to update outlet information. Please try again.");
+    }
   };
+
+  if (!restaurant) {
+    return <div>Loading...</div>; // Placeholder if restaurant data is not available
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
@@ -39,13 +51,13 @@ const ProfilePage = () => {
             {isEditing ? (
               <input
                 type="text"
-                name="name"
-                value={outletInfo.name}
+                name="restaurantName"
+                value={restaurant.restaurantName}
                 onChange={handleChange}
                 className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.name}</p>
+              <p className="text-lg text-gray-700 font-medium">{restaurant.restaurantName}</p>
             )}
           </div>
 
@@ -55,13 +67,13 @@ const ProfilePage = () => {
             {isEditing ? (
               <input
                 type="text"
-                name="address"
-                value={outletInfo.address}
+                name="restaurantAddress"
+                value={restaurant.restaurantAddress}
                 onChange={handleChange}
                 className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.address}</p>
+              <p className="text-lg text-gray-700 font-medium">{restaurant.restaurantAddress}</p>
             )}
           </div>
 
@@ -71,13 +83,13 @@ const ProfilePage = () => {
             {isEditing ? (
               <input
                 type="text"
-                name="phone"
-                value={outletInfo.phone}
+                name="contactNumber"
+                value={restaurant.contactNumber}
                 onChange={handleChange}
                 className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.phone}</p>
+              <p className="text-lg text-gray-700 font-medium">{restaurant.contactNumber}</p>
             )}
           </div>
 
@@ -88,12 +100,12 @@ const ProfilePage = () => {
               <input
                 type="email"
                 name="email"
-                value={outletInfo.email}
+                value={restaurant.email}
                 onChange={handleChange}
                 className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.email}</p>
+              <p className="text-lg text-gray-700 font-medium">{restaurant.email}</p>
             )}
           </div>
         </div>

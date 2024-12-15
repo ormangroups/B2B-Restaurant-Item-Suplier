@@ -1,60 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import api from "@/app/api/mainapi"; // Ensure correct API import path
+import {
+  setCartItems,
+  updateCartItem,
+  removeCartItem,
+  applyCoupon,
+} from "../../redux/slices/cartSlice"; // Ensure this path matches your Redux slice location
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Eastmade - Kashmiri Chilli Powder, 500 gm",
-      image: "/images/item1.png",
-      description: "1 pack",
-      price: 245.75,
-      savings: 361,
-      quantity: 1,
-      tax: 5,
-    },
-    {
-      id: 2,
-      name: "Best Fresh - Cling Film Roll, 1.4 Kg",
-      image: "/images/item2.png",
-      description: "1 pc",
-      price: 229.77,
-      savings: 61,
-      quantity: 1,
-      tax: 18,
-    },
-    {
-      id: 3,
-      name: "Bhagwati - Rectangle Container 14-750 ml",
-      image: "/images/item3.png",
-      description: "Pack of 50",
-      price: 360.64,
-      savings: 23,
-      quantity: 1,
-      tax: 18,
-    },
-  ]);
+  const dispatch = useDispatch();
+  const { items: cartItems, discount, coupon } = useSelector((state) => state.cart);
+  const restaurantId = "123"; // Replace with dynamic restaurant ID if needed
 
-  const [coupon, setCoupon] = useState("");
-  const [discount, setDiscount] = useState(0);
+  // Fetch cart items when the component mounts
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const data = await api.getCartItems(restaurantId);
+        if (Array.isArray(data)) {
+          dispatch(setCartItems(data));
+        } else {
+          console.error("API did not return an array:", data);
+          dispatch(setCartItems([])); // Default to an empty array
+        }
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+        dispatch(setCartItems([])); // Handle API errors gracefully
+      }
+    };
+    fetchCartItems();
+  }, [dispatch, restaurantId]);
+  
 
+  // Calculate summary (item total, savings, GST, and final total)
   const calculateSummary = () => {
-    const itemTotal = cartItems.reduce(
+    const itemTotal = (cartItems || []).reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
-    const savings = cartItems.reduce(
+    const savings = (cartItems || []).reduce(
       (total, item) => total + item.savings * item.quantity,
       0
     );
-    const gst = cartItems.reduce(
+    const gst = (cartItems || []).reduce(
       (total, item) => total + (item.price * item.tax * item.quantity) / 100,
       0
     );
-
+  
     const total = itemTotal + gst - discount;
-
+  
     return {
       itemTotal,
       savings,
@@ -62,33 +59,48 @@ export default function CartPage() {
       total: total > 0 ? total : 0,
     };
   };
+  
 
-  const applyCoupon = () => {
-    if (coupon.toLowerCase() === "save10") {
-      setDiscount(100);
-    } else {
-      alert("Invalid coupon code");
-      setDiscount(0);
+  // Update item quantity
+  const handleUpdateQuantity = async (id, increment) => {
+    const item = cartItems.find((item) => item.id === id);
+    if (!item) return;
+
+    const newQuantity = increment
+      ? item.quantity + 1
+      : Math.max(item.quantity - 1, 1);
+
+    dispatch(updateCartItem({ id, quantity: newQuantity }));
+
+    try {
+      await api.addToCart(restaurantId, { ...item, quantity: newQuantity });
+    } catch (error) {
+      console.error("Error updating cart item:", error);
     }
   };
 
-  const updateQuantity = (id, increment) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: increment
-                ? item.quantity + 1
-                : Math.max(item.quantity - 1, 1),
-            }
-          : item
-      )
-    );
+  // Delete item from cart
+  const handleDeleteItem = async (id) => {
+    const item = cartItems.find((item) => item.id === id);
+    if (!item) return;
+
+    dispatch(removeCartItem(id));
+
+    try {
+      await api.removeFromCart(restaurantId, item);
+    } catch (error) {
+      console.error("Error deleting cart item:", error);
+    }
   };
 
-  const deleteItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  // Apply coupon
+  const handleApplyCoupon = () => {
+    if (coupon.toLowerCase() === "save10") {
+      dispatch(applyCoupon({ coupon, discount: 100 }));
+    } else {
+      alert("Invalid coupon code");
+      dispatch(applyCoupon({ coupon: "", discount: 0 }));
+    }
   };
 
   const summary = calculateSummary();
@@ -128,21 +140,21 @@ export default function CartPage() {
               <div className="flex items-center gap-2">
                 <button
                   className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
-                  onClick={() => updateQuantity(item.id, false)}
+                  onClick={() => handleUpdateQuantity(item.id, false)}
                 >
                   -
                 </button>
                 <span className="font-semibold">{item.quantity}</span>
                 <button
                   className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
-                  onClick={() => updateQuantity(item.id, true)}
+                  onClick={() => handleUpdateQuantity(item.id, true)}
                 >
                   +
                 </button>
               </div>
               <button
                 className="text-red-500 hover:text-red-600"
-                onClick={() => deleteItem(item.id)}
+                onClick={() => handleDeleteItem(item.id)}
               >
                 🗑️
               </button>
@@ -187,11 +199,11 @@ export default function CartPage() {
             type="text"
             placeholder="Enter coupon code"
             value={coupon}
-            onChange={(e) => setCoupon(e.target.value)}
+            onChange={(e) => dispatch(applyCoupon({ coupon: e.target.value, discount }))}
             className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2 focus:outline-none focus:ring focus:ring-blue-200"
           />
           <button
-            onClick={applyCoupon}
+            onClick={handleApplyCoupon}
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
           >
             Apply Coupon

@@ -1,45 +1,44 @@
-import React from "react";
-
-const notifications = [
-  {
-    id: 1,
-    title: "Kitchen tools & appliances ⏳",
-    description: "Trays, KOT holders, GN pans & more, all here for less. Stock up now!",
-    time: "4 hours ago",
-    icon: "/shopping-cart-icon.png", // Replace with your image URL
-  },
-  {
-    id: 2,
-    title: "⏳ Stock up karna na bhoolein!",
-    description: "Special kitchen items khatam hone se pehle abhi order karein!",
-    time: "9 hours ago",
-    icon: "/shopping-cart-icon.png",
-  },
-  {
-    id: 3,
-    title: "Boost customer ratings ⭐⭐⭐⭐⭐",
-    description: "Add sweet saunf sachets to every order. Shop now!",
-    time: "a day ago",
-    icon: "/shopping-cart-icon.png",
-  },
-  {
-    id: 4,
-    title: "Abhi tak try nahi kiya? 👀",
-    description: "1,500+ khaas chuni hui kitchen items ko best prices pe order karein & paye doorstep delivery. Order now ↓",
-    time: "a day ago",
-    icon: "/shopping-cart-icon.png",
-  },
-];
+"use client"
+import React, { useState, useEffect } from "react";
+import api from "@/app/api/mainapi";
 
 const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch notifications when the component mounts
+  useEffect(() => {
+    const loadNotifications = async () => {
+      setLoading(true);
+      try {
+        const data = await api.getAllNotifications(); // Fetch notifications from the API
+        setNotifications(data); // Store notifications in the state
+      } catch (error) {
+        setError("Failed to fetch notifications"); // Handle error if API call fails
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNotifications(); // Call the function to load notifications
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading message while fetching data
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Show error message if there's an error
+  }
+
   return (
-    <div className="h-screen w-full  flex flex-col">
+    <div className="h-screen w-full flex flex-col">
       {/* Header */}
-      <div className=" s p-4 flex justify-between items-center sticky top-0 z-10">
+      <div className="s p-4 flex justify-between items-center sticky top-0 z-10">
         <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
           Notifications
         </h2>
-        
       </div>
 
       {/* Notification List */}
