@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  restaurant: null, // Single restaurant details
+  restaurant: null, // Selected restaurant details
   restaurants: [], // List of all restaurants
   loading: false,
   error: null,
@@ -18,13 +18,13 @@ const restaurantSlice = createSlice({
       state.error = action.payload;
     },
     setRestaurantDetails: (state, action) => {
-      state.restaurant = action.payload; // Single restaurant details
+      state.restaurant = action.payload;
     },
     setRestaurantsList: (state, action) => {
-      state.restaurants = action.payload; // List of restaurants
+      state.restaurants = action.payload;
     },
     addRestaurant: (state, action) => {
-      state.restaurants.push(action.payload); // Add a restaurant
+      state.restaurants.push(action.payload);
     },
     updateRestaurant: (state, action) => {
       const index = state.restaurants.findIndex(

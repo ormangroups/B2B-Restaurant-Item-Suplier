@@ -1,18 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "@/app/api/mainapi"; // Adjust path as needed
 
-// Async thunk to fetch notifications
-export const fetchNotifications = createAsyncThunk(
-  "notifications/fetchNotifications",
-  async (_, thunkAPI) => {
-    try {
-      const response = await api.getNotifications(); // Ensure this API method exists
-      return response.data; // Assuming response structure { data: [...] }
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
+
 
 const notificationSlice = createSlice({
   name: "notifications",

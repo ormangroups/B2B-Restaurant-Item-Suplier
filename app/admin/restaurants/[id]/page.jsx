@@ -39,20 +39,21 @@ const RestaurantDetailPage = () => {
       }
     };
 
-    // const fetchOrdersData = async () => {
-    //   try {
-    //     // Fetch orders data for the specific restaurant
-    //     const response = await axios.get(`/api/orders?restaurantId=${id}`);
-    //     setOrders(response.data);
-    //   } catch (err) {
-    //     console.error("Error fetching orders data:", err);
-    //     setError("Failed to load orders data");
-    //   }
-    // };
+    const fetchOrdersData = async () => {
+      try {
+        // Fetch orders data for the specific restaurant
+        const response = await api.getOrderById(`${id}`);
+        console.log(response)
+        setOrders(response);
+      } catch (err) {
+        console.error("Error fetching orders data:", err);
+        setError("Failed to load orders data");
+      }
+    };
    
     if (id) {
       fetchRestaurantData();
-      // fetchOrdersData();
+       fetchOrdersData();
       setLoading(false); // Set loading to false after data fetching
     }
   }, [id]);
@@ -82,7 +83,8 @@ const RestaurantDetailPage = () => {
         <p className="text-gray-600"><strong>Contact:</strong> {restaurant.contactNumber}</p>
         <p className="text-gray-600"><strong>Email:</strong> {restaurant.email}</p>
         <p className="text-gray-600"><strong>Address:</strong> {restaurant.restaurantAddress}</p>
-        <p className="text-gray-600"><strong>Status:</strong> <span className="text-green-600">{restaurant.isActive}</span></p>
+        <p className="text-gray-600"><strong>GSTIN:</strong> {restaurant.gstin===""?"N/A":restaurant.gstin}</p>
+        <p className="text-gray-600"><strong>Status:</strong> <span className="text-600">{restaurant.isActive?"active":"inactive"}</span></p>
       </div>
     ) : (
       <p className="text-center text-gray-500">Restaurant data is loading...</p>
@@ -132,8 +134,8 @@ const RestaurantDetailPage = () => {
             {orders.map((order) => (
               <tr key={order.id} className="hover:bg-gray-50">
                 <td className="px-4 py-2 border">{order.id}</td>
-                <td className="px-4 py-2 border">{order.date}</td>
-                <td className="px-4 py-2 border">${order.total.toFixed(2)}</td>
+                <td className="px-4 py-2 border">{order.orderDate}</td>
+                <td className="px-4 py-2 border">₹‎{order.totalPrice.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>

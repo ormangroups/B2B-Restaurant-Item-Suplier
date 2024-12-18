@@ -11,6 +11,7 @@ const RestaurantRegistrationPage = () => {
     contactNumber: "",
     email: "",
     password: "",
+    gstin: "", // New GSTIN field
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -38,6 +39,7 @@ const RestaurantRegistrationPage = () => {
         contactNumber: "",
         email: "",
         password: "",
+        gstin: "",
       });
 
       // Redirect to admin restaurant list after successful registration
@@ -155,6 +157,22 @@ const RestaurantRegistrationPage = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="gstin"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              GSTIN (Optional)
+            </label>
+            <input
+              type="text"
+              id="gstin"
+              name="gstin"
+              value={formData.gstin}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button

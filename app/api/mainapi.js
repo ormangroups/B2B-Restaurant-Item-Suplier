@@ -1,7 +1,28 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+const getAuthHeaders = () => {
+  const userData = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
+  const username = userData.username;
+  const password = userData.password; // Retrieve password from cookies
+  if (username && password) {
+    const token = btoa(`${username}:${password}`); // Encode credentials to Base64
+    return { Authorization: `Basic ${token}` };
+  }
+  return {};
+};
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080', // Replace with your actual base URL
+});
+
+// Request interceptor to attach Basic Auth headers dynamically
+axiosInstance.interceptors.request.use((config) => {
+  const authHeaders = getAuthHeaders();
+  config.headers = {
+    ...config.headers,
+    ...authHeaders,
+  };
+  return config;
 });
 
 export const api = {
@@ -43,7 +64,7 @@ export const api = {
   },
 
   getRestaurantById: async (id) => {
-    console.log(`/api/restaurants/${id}`);
+    // console.log(`/api/restaurants/${id}`);
     const response = await axiosInstance.get(`/api/restaurants/${id}`);
     return response.data;
   },
@@ -65,6 +86,14 @@ export const api = {
     const response = await axiosInstance.post("/cart", { productId, quantity });
     return response.data;
   },
+  getCartItems:async (restaurantId)=>{
+    const response = await axiosInstance.get(`/${restaurantId}/cart`);
+    return response.data;
+  },
+  getFavoriteList:async (restaurantId)=>{
+    const response = await axiosInstance.get(`/${restaurantId}/favorites`);
+    return response.data;
+  },
   addFavorite: async (restaurantId, product) => {
     const response = await axiosInstance.post(`/api/restaurants/${restaurantId}/favorites`, product);
     return response.data;
@@ -73,7 +102,7 @@ export const api = {
   removeFavorite: async (restaurantId, product) => {
     const response = await axiosInstance.delete(`/api/restaurants/${restaurantId}/favorites`, {
       data: product,
-    });
+  });
     return response.data;
   },
   getFavoriteList: async (id) => {
@@ -86,10 +115,9 @@ export const api = {
   },
   
 
-  removeFromCart: async (restaurantId, orderItem) => {
-    const response = await axiosInstance.delete(`/api/restaurants/${restaurantId}/cart`, {
-      data: orderItem,
-    });
+  removeFromCart: async (restaurantId, productId) => {
+    const response = await axiosInstance.delete(`/api/restaurants/${restaurantId}/${productId}`);
+    console.log(response.data)
     return response.data;
   },
   
@@ -126,9 +154,9 @@ export const api = {
     const response = await axiosInstance.post(`/api/orders/${restaurantId}`, order);
     return response.data;
   },
-
+ 
   getOrderById: async (id) => {
-    const response = await axiosInstance.get(`/api/orders/${id}`);
+    const response = await axiosInstance.get(`/api/orders/restaurant/${id}`);
     return response.data;
   },
 
@@ -153,34 +181,38 @@ export const api = {
 
   // Notification APIs
 
-  sendToUser: async (recipientId, message) => {
-    const response = await axiosInstance.post(`/api/notifications/send-to-user`, null, {
-      params: { recipientId, message },
-    });
-    return response.data;
-  },
+    // Notification APIs
 
-  sendToAll: async (userIds, message) => {
-    const response = await axiosInstance.post(`/api/notifications/send-to-all`, userIds, {
-      params: { message },
-    });
-    return response.data;
-  },
+    createNotification: async (notification) => {
+     
+        const response = await axiosInstance.post("/api/notifications", notification);
+        return response.data; // The created notification
+     
+    },
+  
+    // Get all notifications
+    getAllNotifications: async () => {
+     
+        const response = await axiosInstance.get("/api/notifications/all");
+        return response.data; // List of all notifications
+     
+    },
+  
+    // Get notifications for a specific user (by recipientId)
+    getNotificationsForUser: async (recipientId) => {
+   
+        const response = await axiosInstance.get(`/api/notifications/user/${recipientId}`);
+        return response.data; // List of notifications for the user
+     
+    },
+  
+    // Get notifications that have no recipient (null recipientId)
+    getUnassignedNotifications: async () => {
+        const response = await axiosInstance.get("/api/notifications/unassigned");
+        return response.data; // List of notifications with null recipientId
+      
+    },
 
-  getNotificationsForUser: async (recipientId) => {
-    const response = await axiosInstance.get(`/api/notifications/user/${recipientId}`);
-    return response.data;
-  },
-
-  markAsRead: async (notificationId) => {
-    const response = await axiosInstance.put(`/api/notifications/mark-as-read/${notificationId}`);
-    return response.data;
-  },
-
-  getAllNotifications: async () => {
-    const response = await axiosInstance.get('/api/notifications/all');
-    return response.data;
-  },
 };
 
 export default api;

@@ -79,7 +79,7 @@ const PaymentPage = ({ params }) => {
 
       {/* Pending Amount */}
       <div className="bg-red-100 text-red-800 font-bold text-lg px-6 py-4 rounded-lg shadow">
-        Pending Amount: ${restaurant.pendingAmount}
+        Pending Amount:₹‎{restaurant.payment.pendingAmount}
       </div>
 
       {/* Add New Payment */}

@@ -1,48 +1,41 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// Initial state holds an array of cart items (each containing a product and quantity)
+const initialState = { items: [] };
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    items: [],
-    coupon: "",
-    discount: 0,
-  },
+  initialState,
   reducers: {
-    setCartItems(state, action) {
+    // Set the cart items with the list of full cart objects (each containing a product and quantity)
+    setCartItems: (state, action) => {
       state.items = action.payload;
     },
-    addToCart(state, action) {
-      const existingItem = state.items.find(item => item.id === action.payload.id);
+    // Add a product along with quantity to the cart
+    addToCart: (state, action) => {
+      const existingItem = state.items.find((item) => item.product.id === action.payload.product.id);
       if (existingItem) {
+        // If item exists, update quantity
         existingItem.quantity += action.payload.quantity;
       } else {
+        // Otherwise, add the new item
         state.items.push(action.payload);
       }
     },
-    updateCartItem(state, action) {
+    // Update the quantity of an existing item in the cart
+    updateCartItemQuantity: (state, action) => {
       const { id, quantity } = action.payload;
-      const item = state.items.find(item => item.id === id);
-      if (item) {
-        item.quantity = quantity;
+      const existingItem = state.items.find((item) => item.id === id);
+      if (existingItem && quantity > 0) {
+        existingItem.quantity = quantity; // Update quantity if valid
       }
     },
-    removeCartItem(state, action) {
-      state.items = state.items.filter(item => item.id !== action.payload);
-    },
-    applyCoupon(state, action) {
-      state.coupon = action.payload.coupon;
-      state.discount = action.payload.discount;
+    // Remove an item from the cart (if needed)
+    removeCartItem: (state, action) => {
+      state.items = state.items.filter((item) => item.id !== action.payload.id);
     },
   },
 });
 
-export const {
-  setCartItems,
-  addToCart,
-  updateCartItem,
-  removeCartItem,
-  applyCoupon,
-} = cartSlice.actions;
-
+export const { setCartItems, addToCart, updateCartItemQuantity, removeCartItem } = cartSlice.actions;
 export default cartSlice.reducer;
