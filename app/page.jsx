@@ -1,7 +1,13 @@
-import React from 'react'
-import "../styles/global.css"
-import { CiUser } from "react-icons/ci";
-function page() {
+"use client";
+import React, { useEffect } from 'react';
+import "../styles/global.css";
+import { AiOutlineUser } from 'react-icons/ai';
+
+
+
+const Page = () => { // Capitalize the component name
+
+
   const stats = [
     { label: "Restaurants Served", value: "5,000+" },
     { label: "Products Delivered", value: "1M+" },
@@ -17,7 +23,6 @@ function page() {
   const teamMembers = [
     { name: "John Doe", role: "Founder & CEO", image: "https://via.placeholder.com/150" },
     { name: "Jane Smith", role: "Head of Operations", image: "https://via.placeholder.com/150" },
-    { name: "Alice Johnson", role: "Chief of Sustainability", image: "https://via.placeholder.com/150" },
   ];
 
   const blogPosts = [
@@ -28,7 +33,9 @@ function page() {
   return (
     <div className="font-sans text-gray-800">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-500 to-green-400 text-white py-20 px-10">
+      <section className="bg-gradient-to-r text-white py-44 px-10" style={{ 
+        backgroundImage: `url("https://www.hyperpure.com/assets/images/home-landing-compress.jpg")` 
+      }}>
         <div className="container mx-auto text-center">
           <h1 className="text-4xl font-bold mb-6">
             Transforming the Way Restaurants Source Ingredients
@@ -48,10 +55,7 @@ function page() {
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-8">Our Mission</h2>
           <p className="text-lg text-center leading-relaxed max-w-3xl mx-auto">
-            Orman is a revolutionary platform that has transformed the way
-            restaurants source their ingredients. By streamlining the procurement
-            process, Orman ensures consistent, reliable supplies while
-            prioritizing sustainability.
+            Orman is a trusted platform that has redefined how restaurants source their ingredients. As a reliable B2B partner for high-quality meats and grocery items, Orman ensures consistent and dependable supplies while prioritizing sustainability. It provides fresh, premium ingredients tailored for restaurants and food businesses.
           </p>
         </div>
       </section>
@@ -86,30 +90,16 @@ function page() {
       {/* Team Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8">Our Team</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800">Our Team</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {teamMembers.map((member, index) => (
-              <div key={index} className="p-4">
-               <CiUser />
-                <h3 className="text-lg font-bold">{member.name}</h3>
-                <p>{member.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Blog Section */}
-      <section className="py-16 px-10 bg-gray-50">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">From the Blog</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {blogPosts.map((post, index) => (
-              <div key={index} className="p-6 bg-white rounded shadow">
-                <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
-                <p className="text-sm text-gray-500">
-                  {post.date} by {post.author}
-                </p>
+              <div key={index} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                {/* Modernized icon */}
+                <div className="flex justify-center mb-4">
+                  <AiOutlineUser size={48} className="text-indigo-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
+                <p className="text-gray-600">{member.role}</p>
               </div>
             ))}
           </div>
@@ -117,6 +107,6 @@ function page() {
       </section>
     </div>
   );
-}
+};
 
-export default page
+export default Page;

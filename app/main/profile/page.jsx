@@ -1,29 +1,69 @@
-"use client"
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie"; // Import js-cookie
 import { FaEdit, FaSave, FaMapMarkerAlt, FaPhone, FaStore, FaEnvelope } from "react-icons/fa";
+import { useDispatch ,useSelector} from "react-redux";
+import api from "@/app/api/mainapi"; // Import your API instance
+
+const EditableField = ({ icon, label, name, value, isEditing, onChange }) => (
+  <div className="flex items-center">
+    {icon}
+    {isEditing ? (
+      <input
+        type={name === "email" ? "email" : "text"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+    ) : (
+      <p className="text-lg text-gray-700 font-medium">{value || `Enter ${label}`}</p>
+    )}
+  </div>
+);
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
+  const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
 
-  // Outlet Information State
-  const [outletInfo, setOutletInfo] = useState({
-    name: "Orman Restaurant",
-    address: "123 Main Street, New York, NY",
-    phone: "+1 234 567 890",
-    email: "contact@orman.com",
+  // Fetch data from cookies
+  const restaurantData = Cookies.get("restaurantData") ? JSON.parse(Cookies.get("restaurantData")) : {};
+
+  // Local state for editing
+  const [restaurantInfo, setRestaurantInfo] = useState({
+    restaurantName: restaurantData.restaurantName || "",
+    restaurantAddress: restaurantData.restaurantAddress || "",
+    contactNumber: restaurantData.contactNumber || "",
+    email: restaurantData.email || "",
+    GSTIN: restaurantData.GSTIN || "",
+    password: "", // Password should remain blank unless explicitly edited
   });
 
   // Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setOutletInfo({ ...outletInfo, [name]: value });
+    setRestaurantInfo({ ...restaurantInfo, [name]: value });
   };
 
   // Handle Save
-  const handleSave = () => {
-    setIsEditing(false);
-    // Save logic (e.g., API call) can be added here
-    console.log("Saved outlet information:", outletInfo);
+  const handleSave = async () => {
+    try {
+      // API call to update the restaurant information
+      await api.updateRestaurant(restaurantId,restaurantInfo);
+      alert("Outlet information updated successfully!");
+      setIsEditing(false);
+
+      // Update cookies with the new data
+      Cookies.set("restaurantData", JSON.stringify(restaurantInfo));
+
+      // Dispatch updated restaurant data to Redux
+      dispatch({ type: "UPDATE_RESTAURANT", payload: restaurantInfo });
+    } catch (error) {
+      console.error("Failed to update outlet information:", error.message);
+      alert("Failed to update outlet information. Please try again.");
+    }
   };
 
   return (
@@ -33,69 +73,38 @@ const ProfilePage = () => {
 
         {/* Outlet Info Section */}
         <div className="space-y-6">
-          {/* Outlet Name */}
-          <div className="flex items-center">
-            <FaStore className="text-red-500 text-xl mr-4" />
-            {isEditing ? (
-              <input
-                type="text"
-                name="name"
-                value={outletInfo.name}
-                onChange={handleChange}
-                className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.name}</p>
-            )}
-          </div>
-
-          {/* Address */}
-          <div className="flex items-center">
-            <FaMapMarkerAlt className="text-red-500 text-xl mr-4" />
-            {isEditing ? (
-              <input
-                type="text"
-                name="address"
-                value={outletInfo.address}
-                onChange={handleChange}
-                className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.address}</p>
-            )}
-          </div>
-
-          {/* Phone */}
-          <div className="flex items-center">
-            <FaPhone className="text-red-500 text-xl mr-4" />
-            {isEditing ? (
-              <input
-                type="text"
-                name="phone"
-                value={outletInfo.phone}
-                onChange={handleChange}
-                className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.phone}</p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className="flex items-center">
-            <FaEnvelope className="text-red-500 text-xl mr-4" />
-            {isEditing ? (
-              <input
-                type="email"
-                name="email"
-                value={outletInfo.email}
-                onChange={handleChange}
-                className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            ) : (
-              <p className="text-lg text-gray-700 font-medium">{outletInfo.email}</p>
-            )}
-          </div>
+          <EditableField
+            icon={<FaStore className="text-red-500 text-xl mr-4" />}
+            label="Restaurant Name"
+            name="restaurantName"
+            value={restaurantInfo.restaurantName}
+            isEditing={isEditing}
+            onChange={handleChange}
+          />
+          <EditableField
+            icon={<FaMapMarkerAlt className="text-red-500 text-xl mr-4" />}
+            label="Address"
+            name="restaurantAddress"
+            value={restaurantInfo.restaurantAddress}
+            isEditing={isEditing}
+            onChange={handleChange}
+          />
+          <EditableField
+            icon={<FaPhone className="text-red-500 text-xl mr-4" />}
+            label="Phone Number"
+            name="contactNumber"
+            value={restaurantInfo.contactNumber}
+            isEditing={isEditing}
+            onChange={handleChange}
+          />
+          <EditableField
+            icon={<FaEnvelope className="text-red-500 text-xl mr-4" />}
+            label="Email"
+            name="email"
+            value={restaurantInfo.email}
+            isEditing={isEditing}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Action Buttons */}

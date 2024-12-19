@@ -1,72 +1,90 @@
-import React from "react";
-
-const notifications = [
-  {
-    id: 1,
-    title: "Kitchen tools & appliances ⏳",
-    description: "Trays, KOT holders, GN pans & more, all here for less. Stock up now!",
-    time: "4 hours ago",
-    icon: "/shopping-cart-icon.png", // Replace with your image URL
-  },
-  {
-    id: 2,
-    title: "⏳ Stock up karna na bhoolein!",
-    description: "Special kitchen items khatam hone se pehle abhi order karein!",
-    time: "9 hours ago",
-    icon: "/shopping-cart-icon.png",
-  },
-  {
-    id: 3,
-    title: "Boost customer ratings ⭐⭐⭐⭐⭐",
-    description: "Add sweet saunf sachets to every order. Shop now!",
-    time: "a day ago",
-    icon: "/shopping-cart-icon.png",
-  },
-  {
-    id: 4,
-    title: "Abhi tak try nahi kiya? 👀",
-    description: "1,500+ khaas chuni hui kitchen items ko best prices pe order karein & paye doorstep delivery. Order now ↓",
-    time: "a day ago",
-    icon: "/shopping-cart-icon.png",
-  },
-];
+"use client";
+import React, { useState, useEffect } from "react";
+import api from "@/app/api/mainapi";
+import {  useSelector } from "react-redux";
 
 const Notifications = () => {
+  const [userNotifications, setUserNotifications] = useState([]); // Notifications for the user
+  const [unassignedNotifications, setUnassignedNotifications] = useState([]); // Unassigned notifications
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
+  // Fetch notifications when the component mounts
+  useEffect(() => {
+    const loadNotifications = async () => {
+      setLoading(true);
+      try {
+        // Fetch notifications for the user
+        const userData = await api.getNotificationsForUser(restaurantId);
+        setUserNotifications(userData);
+
+        // Fetch unassigned notifications
+        const unassignedData = await api.getUnassignedNotifications();
+        setUnassignedNotifications(unassignedData);
+      } catch (error) {
+        setError("Failed to fetch notifications"); // Handle error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNotifications(); // Load notifications on mount
+  }, [restaurantId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-gray-600 text-lg font-semibold">Loading...</div>
+      </div>
+    ); // Show loading state
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-red-600 text-lg font-semibold">{error}</div>
+      </div>
+    ); // Show error state
+  }
+
+  // Combine notifications and sort them by timestamp (newest first)
+  const combinedNotifications = [...userNotifications, ...unassignedNotifications].sort(
+    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+  );
+
   return (
-    <div className="h-screen w-full  flex flex-col">
+    <div className="h-screen w-full flex flex-col bg-gray-100">
       {/* Header */}
-      <div className=" s p-4 flex justify-between items-center sticky top-0 z-10">
-        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
-          Notifications
-        </h2>
-        
+      <div className="p-4 sticky top-0 bg-white shadow-md z-10">
+        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
       </div>
 
       {/* Notification List */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className="flex items-start p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
-          >
-            {/* Icon */}
-            <img
-              src={notification.icon}
-              alt="icon"
-              className="w-12 h-12 rounded-full object-cover mr-4 border border-gray-300"
-            />
-            {/* Content */}
-            <div className="flex-1">
-              <h3 className="text-base md:text-lg font-medium text-gray-800 mb-1">
-                {notification.title}
-              </h3>
-              <p className="text-sm text-gray-600 mb-1">
-                {notification.description}
-              </p>
-              <span className="text-xs text-gray-400">{notification.time}</span>
-            </div>
+      <div className="flex-1 overflow-y-auto px-4 py-6">
+        {combinedNotifications.length > 0 ? (
+          <div className="space-y-4">
+            {combinedNotifications.map((notification) => (
+              <div
+                key={notification.id}
+                className="flex items-start p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300"
+              >
+                {/* Content */}
+                <div className="flex-1">
+                  <p className="text-sm text-gray-700 mb-2">
+                    {notification.message}
+                  </p>
+                  <span className="text-xs text-gray-500">
+                    {new Date(notification.timestamp).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <div className="text-center text-gray-500 text-lg">
+            No notifications to show.
+          </div>
+        )}
       </div>
 
       {/* Footer */}
