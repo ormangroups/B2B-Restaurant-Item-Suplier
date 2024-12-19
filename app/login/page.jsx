@@ -18,7 +18,7 @@ function Page() {
     dispatch(setLoading(true)); // Loading state starts
     try {
       // Make sure the API endpoint starts with http:// or https://
-      const response = await axios.post("http://localhost:8080/public/login", {
+      const response = await axios.post("https://orman-backend.onrender.com/public/login", {
         username: email, // Map email to username as required by API
         password: password,
       });

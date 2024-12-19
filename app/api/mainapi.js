@@ -12,7 +12,7 @@ const getAuthHeaders = () => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080', // Replace with your actual base URL
+  baseURL: 'https://orman-backend.onrender.com', // Replace with your actual base URL
 });
 
 // Request interceptor to attach Basic Auth headers dynamically
