@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FaShoppingCart, FaHeart, FaBell, FaUser, FaTimes, FaBars } from "react-icons/fa";
-import { FaWallet, FaHistory, FaSignOutAlt } from "react-icons/fa";
+import { FaShoppingCart, FaHeart, FaBell, FaUser, FaTimes, FaBars, FaWallet, FaHistory, FaSignOutAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSelector } from "react-redux";
@@ -35,99 +34,91 @@ function Navbar() {
   if (role === "ADMIN") return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
+    <div className="relative">
       {/* Navbar for All Devices */}
-      <div className="flex justify-between items-center px-6 py-4">
-        {/* Left: Brand Logo or Name */}
-        <div>
-          <Link href="/">
-            <img
-              src="https://i.imgur.com/nCjPRTB.png"
-              alt="Orman logo"
-              className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110"
-            />
-          </Link>
-        </div>
-
-        {/* If user is not logged in */}
-        {role === null ? (
-          <button
-            onClick={handleLogin}
-            className="text-white bg-red-500 px-4 py-2 rounded hover:bg-red-600"
-          >
-            Login
-          </button>
-        ) : (
-          // If user is logged in, show navigation buttons
-          <div className="hidden lg:flex space-x-8">
-            <button
-              onClick={() => {
-                handleButtonClick("shop");
-                goToMain();
-              }}
-              className={`flex items-center space-x-2 ${
-                activeButton === "shop" ? "text-red-500" : "text-gray-700"
-              } hover:text-red-500`}
-            >
-              <FaShoppingCart className="text-xl" />
-              <span>Shop</span>
-            </button>
-
-            <button
-              onClick={() => {
-                handleButtonClick("favorite");
-                openFavorite();
-              }}
-              className={`flex items-center space-x-2 ${
-                activeButton === "favorite" ? "text-red-500" : "text-gray-700"
-              } hover:text-red-500`}
-            >
-              <FaHeart className="text-xl" />
-              <span>Favorite</span>
-            </button>
-
-            <button
-              onClick={() => {
-                handleButtonClick("notification");
-                openNotification();
-              }}
-              className={`relative flex items-center space-x-2 ${
-                activeButton === "notification" ? "text-red-500" : "text-gray-700"
-              } hover:text-red-500`}
-            >
-              <FaBell className="text-xl relative">
-                {hasNotifications && (
-                  <span className="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full"></span>
-                )}
-              </FaBell>
-              <span>Notify</span>
-            </button>
-
-            <button
-              onClick={() => {
-                handleButtonClick("cart");
-                openCart();
-              }}
-              className={`relative flex items-center space-x-2 ${
-                activeButton === "cart" ? "text-red-500" : "text-gray-700"
-              } hover:text-red-500`}
-            >
-              <div className="relative">
-                <FaShoppingCart className="text-xl" />
-                {cartQuantity > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">
-                    {cartQuantity}
-                  </span>
-                )}
-              </div>
-              <span>Cart</span>
-            </button>
-
-            <button onClick={toggleMenu} className="text-gray-700 hover:text-red-500">
-              <FaBars className="text-xl" />
-            </button>
+      <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
+        <div className="flex justify-between items-center px-6 py-4">
+          {/* Left: Brand Logo or Name */}
+          <div>
+            <Link href="/">
+              <img
+                src="https://i.imgur.com/nCjPRTB.png"
+                alt="Orman logo"
+                className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110"
+              />
+            </Link>
           </div>
-        )}
+
+          {/* If user is not logged in */}
+          {role === null ? (
+            <button
+              onClick={handleLogin}
+              className="text-white bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+            >
+              Login
+            </button>
+          ) : (
+            // If user is logged in, show navigation buttons
+            <div className="hidden lg:flex space-x-8">
+              <button
+                onClick={() => {
+                  handleButtonClick("shop");
+                  goToMain();
+                }}
+                className={`flex items-center space-x-2 ${activeButton === "shop" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+              >
+                <FaShoppingCart className="text-xl" />
+                <span>Shop</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  handleButtonClick("favorite");
+                  openFavorite();
+                }}
+                className={`flex items-center space-x-2 ${activeButton === "favorite" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+              >
+                <FaHeart className="text-xl" />
+                <span>Favorite</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  handleButtonClick("notification");
+                  openNotification();
+                }}
+                className={`relative flex items-center space-x-2 ${activeButton === "notification" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+              >
+                <FaBell className="text-xl relative">
+                  {hasNotifications && <span className="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full"></span>}
+                </FaBell>
+                <span>Notify</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  handleButtonClick("cart");
+                  openCart();
+                }}
+                className={`relative flex items-center space-x-2 ${activeButton === "cart" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+              >
+                <div className="relative">
+                  <FaShoppingCart className="text-xl" />
+                  {cartQuantity > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">
+                      {cartQuantity}
+                    </span>
+                  )}
+                </div>
+                <span>Cart</span>
+              </button>
+
+              <button onClick={toggleMenu} className="text-gray-700 hover:text-red-500">
+                <FaBars className="text-xl" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Responsive Menu for Smaller Screens */}
@@ -179,9 +170,12 @@ function Navbar() {
                   <Link
                     href="/"
                     className="flex items-center text-gray-700 hover:text-red-500"
-                    onClick={() => {handleButtonClick("logout"); Cookies.remove("userData"); 
+                    onClick={() => {
+                      handleButtonClick("logout");
+                      Cookies.remove("userData");
                       Cookies.remove("restaurantData");
-                        router.push("/"); }}
+                      router.push("/");
+                    }}
                   >
                     <FaSignOutAlt className="mr-4 text-xl" /> Logout
                   </Link>
@@ -191,6 +185,68 @@ function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Bottom Navbar for Small Screens */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden">
+        <button
+          onClick={() => {
+            handleButtonClick("shop");
+            goToMain();
+          }}
+          className={`flex flex-col items-center ${activeButton === "shop" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+        >
+          <FaShoppingCart className="text-xl" />
+          <span className="text-xs">Shop</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleButtonClick("favorite");
+            openFavorite();
+          }}
+          className={`flex flex-col items-center ${activeButton === "favorite" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+        >
+          <FaHeart className="text-xl" />
+          <span className="text-xs">Favorite</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleButtonClick("notification");
+            openNotification();
+          }}
+          className={`relative flex flex-col items-center ${activeButton === "notification" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+        >
+          <FaBell className="text-xl" />
+          {hasNotifications && (
+            <span className="absolute top-0 right-2 bg-red-500 w-2 h-2 rounded-full"></span>
+          )}
+          <span className="text-xs">Notify</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleButtonClick("cart");
+            openCart();
+          }}
+          className={`relative flex flex-col items-center ${activeButton === "cart" ? "text-red-500" : "text-gray-700"} hover:text-red-500`}
+        >
+          <div className="relative">
+            <FaShoppingCart className="text-xl" />
+            {cartQuantity > 0 && (
+              <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">
+                {cartQuantity}
+              </span>
+            )}
+          </div>
+          <span className="text-xs">Cart</span>
+        </button>
+
+        <button onClick={toggleMenu} className="flex flex-col items-center text-gray-700 hover:text-red-500">
+          <FaBars className="text-xl" />
+          <span className="text-xs">Menu</span>
+        </button>
+      </div>
     </div>
   );
 }
