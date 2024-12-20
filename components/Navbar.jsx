@@ -225,6 +225,10 @@ function Navbar() {
           </div>
           <span className="text-xs">Cart</span>
         </button>
+        <button onClick={toggleMenu} className="flex flex-col items-center text-gray-700 hover:text-red-500">
+          <FaBars className="text-xl" />
+          <span className="text-xs">Menu</span>
+        </button>
       </div>
     </div>
   );
