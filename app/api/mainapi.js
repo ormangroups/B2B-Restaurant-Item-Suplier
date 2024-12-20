@@ -212,6 +212,10 @@ export const api = {
         return response.data; // List of notifications with null recipientId
       
     },
+    login:async()=>{
+      const response = await axiosInstance.post("/public/login");
+      return response.data;
+    }
 
 };
 

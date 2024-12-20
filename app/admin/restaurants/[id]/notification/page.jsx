@@ -1,131 +1,165 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
-import api from "@/app/api/mainapi";
+import { useRouter } from "next/navigation"; // Next.js router for navigation
+import api from "@/app/api/mainapi"; // Assuming the API methods are in this file
+import { FaArrowLeft, FaBell } from "react-icons/fa"; // Icons for styling
 
-const NotificationPage = ({ params }) => {
-  const { id } = params; // Restaurant ID
-  const [notifications, setNotifications] = useState([]); // Notifications list
-  const [notificationForm, setNotificationForm] = useState({
-    message: "",
-  });
-  const [loading, setLoading] = useState(false); // Loading state for better UX
+const AdminNotificationPage = () => {
+  const router = useRouter();
+  const [restaurants, setRestaurants] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [sentNotifications, setSentNotifications] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Fetch notifications when the component is mounted
   useEffect(() => {
-    const fetchNotifications = async () => {
-      setLoading(true);
+    const fetchRestaurants = async () => {
       try {
-        const response = await api.getNotificationsForUser(id);
-        if (response && Array.isArray(response)) {
-          setNotifications(response); // Assume response is an array of notifications
-        } else {
-          setNotifications([]);
-        }
+        const response = await api.getAllRestaurants();
+        setRestaurants(response);
       } catch (error) {
-        console.error("Error fetching notifications:", error);
-        alert("Failed to fetch notifications.");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching restaurants:", error);
       }
     };
 
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.getAllNotifications();
+        setSentNotifications(response);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    fetchRestaurants();
     fetchNotifications();
-  }, [id]);
+  }, []);
 
-  // Handle sending notifications
-  const handleSendNotification = async (e) => {
-    e.preventDefault();
+  const handleSendNotification = async () => {
+    if (!notificationMessage) return alert("Please enter a notification message.");
 
-    // Basic validation for an empty message
-    if (!notificationForm.message.trim()) {
-      alert("Notification message cannot be empty.");
-      return;
-    }
+    const recipientId = selectedRestaurant ? selectedRestaurant.id : null;
 
     const newNotification = {
-      recipientId: id,
-      message: notificationForm.message,
-      isRead: false, // Default value for new notifications
-      timestamp: new Date().toISOString(),
+      message: notificationMessage,
+      recipientId,
     };
 
     try {
-      const response = await api.createNotification(newNotification);
-      if (response) {
-        setNotifications((prev) => [response, ...prev]); // Prepend the new notification
-      }
-
-      // Reset the form
-      setNotificationForm({ message: "" });
+      await api.createNotification(newNotification);
+      const updatedNotifications = await api.getAllNotifications();
+      setSentNotifications(updatedNotifications);
+      setNotificationMessage("");
+      setSelectedRestaurant(null);
+      setSearchTerm("");
       alert("Notification sent successfully!");
     } catch (error) {
       console.error("Error sending notification:", error);
-      alert("Failed to send notification.");
     }
   };
 
-  return (
-    <div className="container mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-extrabold text-gray-800">
-        Notifications for Restaurant {id}
-      </h1>
+  const filteredRestaurants = restaurants.filter((restaurant) =>
+    restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      {/* Send Notification Form */}
-      <div className="bg-white shadow-lg rounded-xl p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">Send Notification</h2>
-        <form onSubmit={handleSendNotification} className="space-y-4">
-          <div>
-            <label className="block text-gray-600 font-medium mb-2">Message</label>
-            <textarea
-              className="w-full px-4 py-2 border rounded-lg"
-              rows="4"
-              value={notificationForm.message}
-              onChange={(e) =>
-                setNotificationForm({ ...notificationForm, message: e.target.value })
-              }
-              placeholder="Enter your notification message..."
-              required
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
-          >
-            Send Notification
-          </button>
-        </form>
+  const handleRestaurantSelect = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+    setSearchTerm(restaurant.restaurantName);
+    setShowDropdown(false);
+  };
+
+  return (
+    <div className="container mx-auto  py-6 max-w-4xl">
+      {/* Back Button */}
+      <button
+        onClick={() => router.back()}
+        className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
+      >
+        <FaArrowLeft className="mr-2" /> Back
+      </button>
+
+      <h1 className="text-3xl font-bold mb-6">Admin Notification Center</h1>
+
+      {/* Notification Form */}
+      <div className="bg-white p-4 shadow-lg rounded-lg mb-6">
+        <h2 className="text-xl font-bold mb-4">Send Notification</h2>
+        <textarea
+          className="w-full p-3 border rounded-md mb-4"
+          placeholder="Enter notification message"
+          value={notificationMessage}
+          onChange={(e) => setNotificationMessage(e.target.value)}
+          rows="4"
+        />
+        <div className="relative mb-4">
+          <label className="block text-gray-700 font-semibold">Send to:</label>
+          <input
+            type="text"
+            className="w-full p-3 border rounded-md mt-2"
+            placeholder="Search restaurants"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setShowDropdown(true);
+            }}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+            onFocus={() => setShowDropdown(true)}
+          />
+          {showDropdown && searchTerm && (
+            <div className="absolute bg-white border mt-2 rounded-md w-full max-h-60 overflow-y-auto shadow-lg z-10">
+              {filteredRestaurants.length > 0 ? (
+                filteredRestaurants.map((restaurant) => (
+                  <div
+                    key={restaurant.id}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleRestaurantSelect(restaurant)}
+                  >
+                    {restaurant.restaurantName}
+                  </div>
+                ))
+              ) : (
+                <div className="p-2 text-gray-500">No matching restaurants</div>
+              )}
+            </div>
+          )}
+        </div>
+        <button
+          onClick={handleSendNotification}
+          className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
+        >
+          Send Notification
+        </button>
       </div>
 
-      {/* Notification History */}
-      <div className="bg-white shadow-lg rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Notification History</h2>
-        {loading ? (
-          <p className="text-gray-500">Loading notifications...</p>
-        ) : notifications.length > 0 ? (
-          <ul className="space-y-4">
-            {notifications.map((notification) => (
-              <li
-                key={notification.id || notification.timestamp} // Unique identifier fallback
-                className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
-              >
-                <p className="text-gray-600">
-                  {notification.message || "No message provided"}
-                </p>
-                <span className="text-gray-500 text-sm">
-                  {notification.timestamp
-                    ? new Date(notification.timestamp).toLocaleString()
-                    : "No timestamp available"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No notifications sent yet.</p>
-        )}
+      {/* Sent Notifications */}
+      <div className="bg-white  shadow-lg rounded-lg ">
+        <h2 className="text-xl font-bold mb-4">Sent Notifications</h2>
+        <table className="min-w-full table-auto border-collapse text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2 border">Date</th>
+              <th className="px-4 py-2 border">Message</th>
+              <th className="px-4 py-2 border">Target</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sentNotifications.map((notification) => {
+              const restaurantName = notification.recipientId
+                ? restaurants.find((r) => r.id === notification.recipientId)?.restaurantName
+                : "All Restaurants";
+              return (
+                <tr key={notification.id}>
+                  <td className="px-4 py-2 border">{notification.timestamp}</td>
+                  <td className="px-4 py-2 border">{notification.message}</td>
+                  <td className="px-4 py-2 border">{restaurantName}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 };
 
-export default NotificationPage;
+export default AdminNotificationPage;

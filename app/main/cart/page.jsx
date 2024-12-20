@@ -5,6 +5,7 @@ import { setCartItems, removeCartItem } from "../../redux/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import api from "@/app/api/mainapi"; // Ensure correct API import path
 import { AiOutlineDelete } from "react-icons/ai"; // Import React Icon for Remove Button
+import { FaSpinner } from "react-icons/fa"; // Icon for spinner
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export default function CartPage() {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [loading, setLoading] = useState(true); // State for loading screen
   const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
 
   // Fetch cart items when the component mounts
@@ -36,6 +38,8 @@ export default function CartPage() {
         }
       } catch (error) {
         console.error("Error fetching cart items:", error);
+      } finally {
+        setLoading(false); // Hide loading screen after fetch is complete
       }
     };
     fetchCartItems();
@@ -107,6 +111,7 @@ export default function CartPage() {
           category: item.category,
           description: item.description,
           price: item.price,
+          image:item.image,
         },
         quantity: item.quantity,
         price: item.totalPrice, // Use the pre-calculated totalPrice
@@ -119,14 +124,11 @@ export default function CartPage() {
       finalAmount,
       orderDate: new Date(),
       status: "Pending",
-      
     };
 
     try {
-      console.log(order)
-      await api.createOrder(restaurantId,order); // Send the order to the backend
-      // Clear the cart in the backend
-       // Clear the Redux state
+      await api.createOrder(restaurantId, order); // Send the order to the backend
+      dispatch(setCartItems([])); // Clear the Redux state
       alert("Order placed successfully!");
     } catch (error) {
       console.error("Error placing order:", error);
@@ -136,78 +138,100 @@ export default function CartPage() {
     }
   };
 
+  if (loading) {
+    // Loading screen content
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50"> <div className="flex flex-col items-center"> <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div> <h2 className="text-center text-lg font-semibold">Loading...</h2> <p className="w-1/2 text-center text-gray-500">Please wait while we prepare everything for you.</p> </div> </div>
+    );
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 p-4 md:p-8 bg-gray-50">
       {/* Left Section: Cart Items */}
       <div className="flex-1 bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-6">
-          {cartItems.length} items in your cart
-        </h1>
-        <div className="space-y-6">
-          {cartItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col sm:flex-row items-center justify-between border-b pb-4 space-y-4 sm:space-y-0 sm:space-x-4"
-            >
-              <div className="flex items-center gap-4 w-full">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-20 h-20 object-cover rounded-lg"
-                />
-                <div className="flex flex-col w-full">
-                  <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
-                  <p className="text-sm text-gray-700">
-                    ₹{(item.price || 0).toFixed(2)} x {item.quantity} = ₹{(item.totalPrice || 0).toFixed(2)}
-                  </p>
+        {cartItems.length > 0 ? (
+          <>
+            <h1 className="text-xl md:text-2xl font-bold mb-6">
+              {cartItems.length} items in your cart
+            </h1>
+            <div className="space-y-6">
+              {cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col sm:flex-row items-center justify-between border-b pb-4 space-y-4 sm:space-y-0 sm:space-x-4"
+                >
+                  <div className="flex items-center gap-4 w-full">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="flex flex-col w-full">
+                      <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
+                      <p className="text-sm text-gray-700">
+                        ₹{(item.price || 0).toFixed(2)} x {item.quantity} = ₹{(item.totalPrice || 0).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                        className="px-3 py-1 border rounded"
+                        disabled={item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button
+                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        className="px-3 py-1 border rounded"
+                      >
+                        +
+                      </button>
+                      <button
+                        onClick={() => handleRemoveFromCart(item)}
+                        className="px-3 py-1 text-red-600"
+                      >
+                        <AiOutlineDelete size={20} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                    className="px-3 py-1 border rounded"
-                    disabled={item.quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                    className="px-3 py-1 border rounded"
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() => handleRemoveFromCart(item)}
-                    className="px-3 py-1 text-red-600"
-                  >
-                    <AiOutlineDelete size={20} />
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        ) : (
+          <div className="text-center text-gray-500">
+            <h1 className="text-xl md:text-2xl font-bold mb-6">Your cart is empty</h1>
+            <p>Browse our products and add some items to your cart.</p>
+          </div>
+        )}
       </div>
 
       {/* Right Section: Summary */}
       <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-md p-6 space-y-6">
-        <div className="space-y-2">
-          <div className="flex justify-between text-gray-700">
-            <span>Discount</span>
-            <span className="text-green-500">-₹{(discountAmount || 0).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-gray-700">
-            <span>Total Price</span>
-            <span>₹{(finalAmount || 0).toFixed(2)}</span>
-          </div>
-        </div>
-        <button
-          className={`w-full py-3 rounded-lg font-semibold ${isPlacingOrder ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 text-white hover:bg-red-600"}`}
-          onClick={handlePlaceOrder}
-          disabled={isPlacingOrder}
-        >
-          {isPlacingOrder ? "Placing Order..." : "Place Order"}
-        </button>
+        {cartItems.length > 0 && (
+          <>
+            <div className="space-y-2">
+              <div className="flex justify-between text-gray-700">
+                <span>Discount</span>
+                <span className="text-green-500">-₹{(discountAmount || 0).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-700">
+                <span>Total Price</span>
+                <span>₹{(finalAmount || 0).toFixed(2)}</span>
+              </div>
+            </div>
+            <button
+              className={`w-full py-3 rounded-lg font-semibold ${
+                isPlacingOrder ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 text-white hover:bg-red-600"
+              }`}
+              onClick={handlePlaceOrder}
+              disabled={isPlacingOrder}
+            >
+              {isPlacingOrder ? "Placing Order..." : "Place Order"}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

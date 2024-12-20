@@ -22,7 +22,7 @@ const OrderHistory = () => {
 
         // Fetch orders for the restaurant
         const response = await api.getOrderById(restaurantId);
-        console.log(response)
+        console.log(response);
         setOrders(response); // Assuming the response data contains the orders
       } catch (error) {
         setError("Failed to fetch orders. Please try again.");
@@ -36,8 +36,12 @@ const OrderHistory = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-xl">
-        <p>Loading...</p>
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <div className="flex flex-col items-center">
+          <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div>
+          <h2 className="text-center text-lg font-semibold">Loading...</h2>
+          <p className="w-1/2 text-center text-gray-500">Please wait while we prepare everything for you.</p>
+        </div>
       </div>
     );
   }
@@ -56,17 +60,36 @@ const OrderHistory = () => {
       <p className="text-gray-500 mt-2">
         Check the status of recent orders, manage returns, and discover similar products.
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {orders.length > 0 ? (
           orders.map((order, index) => (
             <div key={index} className="bg-white shadow rounded-lg p-4">
-              <img
-                src={order.img || "https://placehold.co/300x300"}
-                alt={`${order.name} image`}
-                className="w-full h-48 object-cover rounded-lg mb-4"
-              />
-              <h2 className="text-lg font-medium text-gray-900">{order.name}</h2>
-              <p className={`mt-1 ${order.statusColor}`}>{order.status}</p>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-medium text-gray-900">Order ID: {order.id}</h2>
+                <span className="px-2 py-1 rounded text-white bg-red-500">{order.status}</span>
+              </div>
+              <div className="space-y-4 h-48 overflow-y-auto">
+                {order.items.map((item, idx) => (
+                  <div key={idx} className="flex items-start space-x-4">
+                    <img
+                      src={item.product.image}
+                      alt={`${item.product.name} image`}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="flex-1 text-gray-700">
+                      <h3 className="text-md font-medium">{item.product.name}</h3>
+                      <p className="text-sm">Category: {item.product.category}</p>
+                      <p className="text-sm">Quantity: {item.quantity}</p>
+                      <p className="text-sm">Price: ₹{item.product.price}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 text-gray-700">
+                <p className="font-bold">Order Date: {new Date(order.orderDate).toLocaleDateString()}</p>
+                <p className="font-bold">Total Price: ₹{order.totalPrice}</p>
+                <p className="font-bold">Final Amount: ₹{order.finalAmount}</p>
+              </div>
             </div>
           ))
         ) : (

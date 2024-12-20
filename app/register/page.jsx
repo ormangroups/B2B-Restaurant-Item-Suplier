@@ -178,7 +178,7 @@ const RestaurantRegistrationPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition disabled:opacity-50"
+            className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition disabled:opacity-50"
           >
             {loading ? "Registering..." : "Register Restaurant"}
           </button>
