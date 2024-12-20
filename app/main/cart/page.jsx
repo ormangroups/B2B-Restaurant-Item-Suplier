@@ -129,10 +129,8 @@ export default function CartPage() {
     try {
       await api.createOrder(restaurantId, order); // Send the order to the backend
       dispatch(setCartItems([])); // Clear the Redux state
-      alert("Order placed successfully!");
     } catch (error) {
       console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
     } finally {
       setIsPlacingOrder(false);
     }

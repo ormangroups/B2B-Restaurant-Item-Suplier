@@ -70,7 +70,7 @@ const PaymentPage = ({ params: paramsPromise }) => {
       setError("");
       setNewPayment({ amount: "", date: "" });
 
-      alert("Payment added successfully!");
+      
     } catch (error) {
       console.error("Error adding payment:", error);
       setError("Failed to add payment.");

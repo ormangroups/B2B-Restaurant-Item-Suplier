@@ -56,10 +56,8 @@ export default function FavoritesPage() {
       await api.addToCart(restaurantId, orderItem);
       const updatedCart = await api.getCartItems(restaurantId);
       dispatch(setCartItems(updatedCart));
-      alert("Item added to cart successfully!");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      alert("Failed to add item to cart.");
     }
   };
 
@@ -68,10 +66,8 @@ export default function FavoritesPage() {
     try {
       dispatch(removeFavorite(item));
       await api.removeFavorite(restaurantId, item);
-      alert("Item removed from favorites successfully!");
     } catch (error) {
       console.error("Failed to remove favorite:", error);
-      alert("Failed to remove item from favorites.");
     }
   };
 

@@ -53,7 +53,6 @@ const AdminNotificationPage = () => {
       setNotificationMessage("");
       setSelectedRestaurant(null);
       setSearchTerm("");
-      alert("Notification sent successfully!");
     } catch (error) {
       console.error("Error sending notification:", error);
     }
