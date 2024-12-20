@@ -57,9 +57,7 @@ const AdminNotificationPage = () => {
       // Reset input fields after sending notification
       setNotificationMessage("");
       setSelectedRestaurant(null);
-      setSearchTerm(""); // Reset the search term after sending notification
-
-      alert("Notification sent successfully!");
+      setSearchTerm(""); 
     } catch (error) {
       console.error("Error sending notification:", error);
     }

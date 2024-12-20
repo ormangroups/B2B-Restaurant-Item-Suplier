@@ -52,7 +52,6 @@ const ProfilePage = () => {
     try {
       // API call to update the restaurant information
       await api.updateRestaurant(restaurantId,restaurantInfo);
-      alert("Outlet information updated successfully!");
       setIsEditing(false);
 
       // Update cookies with the new data
@@ -62,7 +61,6 @@ const ProfilePage = () => {
       dispatch({ type: "UPDATE_RESTAURANT", payload: restaurantInfo });
     } catch (error) {
       console.error("Failed to update outlet information:", error.message);
-      alert("Failed to update outlet information. Please try again.");
     }
   };
 
