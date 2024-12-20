@@ -42,7 +42,7 @@ const ProfilePage = () => {
     const fetchData = async () => {
       try {
         const response = await api.getRestaurantById(restaurantId);
-        setRestaurantInfo(response.data);
+        setRestaurantInfo(response);
       } catch (error) {
         console.error("Failed to fetch restaurant information:", error.message);
       }
