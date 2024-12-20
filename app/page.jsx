@@ -19,10 +19,11 @@ const Page = () => { // Capitalize the component name
     { title: "Efficiency", description: "Streamlined procurement and fast delivery." },
     { title: "Quality", description: "Wide range of high-quality, fresh products." },
   ];
-
+  Archisman Hota ( co-founder)
+  Subhrajit Rout (co-founder)
   const teamMembers = [
-    { name: "John Doe", role: "Founder & CEO", image: "https://via.placeholder.com/150" },
-    { name: "Jane Smith", role: "Head of Operations", image: "https://via.placeholder.com/150" },
+    { name: "Archisman Hota", role: "Co-Founder", image: "https://via.placeholder.com/150" },
+    { name: "Subhrajit Rout ", role: "Co-Founder", image: "https://via.placeholder.com/150" },
   ];
 
   const blogPosts = [
@@ -61,16 +62,7 @@ const Page = () => { // Capitalize the component name
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-xl font-bold">
-              <p className="text-4xl text-blue-500">{stat.value}</p>
-              <p>{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      
 
       {/* Values Section */}
       <section className="py-16 px-10 bg-gray-50">
@@ -96,7 +88,7 @@ const Page = () => { // Capitalize the component name
               <div key={index} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 {/* Modernized icon */}
                 <div className="flex justify-center mb-4">
-                  <AiOutlineUser size={48} className="text-indigo-600" />
+                  <AiOutlineUser size={48} className="text-red-600" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
                 <p className="text-gray-600">{member.role}</p>
