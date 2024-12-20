@@ -83,11 +83,11 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-2 py-6">
       <h1 className="text-3xl font-semibold text-gray-800 text-start mb-6">
         Favorites
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-3 sm:mb-1 lg:mb-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-4 sm:mb-1 lg:mb-0">
         {favorites.map((item) => (
           <div
             key={item.id}
