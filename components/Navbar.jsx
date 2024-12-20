@@ -178,7 +178,7 @@ function Navbar() {
 
 
       {/* Bottom Navbar for Small Screens */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden z-40">
         <button
           onClick={() => {
             handleButtonClick("shop");
