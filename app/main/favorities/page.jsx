@@ -10,29 +10,36 @@ import { addToCart, setCartItems } from "../../redux/slices/cartSlice";
 
 export default function FavoritesPage() {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
 
   // Retrieve the favorites and cart items from the Redux store
   const favorites = useSelector((state) => state.favorites?.favorites || []);
   const cartItems = useSelector((state) => state.cart?.items || []);
   const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
-
+  
   // Fetch favorite items and cart items on mount
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
+        setLoading(true);  // Start loading
         const data = await api.getFavoriteList(restaurantId);
         dispatch(setFavorites(data));
       } catch (error) {
         console.error("Failed to fetch favorites:", error);
+      } finally {
+        setLoading(false);  // Stop loading
       }
     };
 
     const fetchCartItems = async () => {
       try {
+        setLoading(true);  // Start loading
         const data = await api.getCartItems(restaurantId);
         dispatch(setCartItems(data));
       } catch (error) {
         console.error("Failed to fetch cart items:", error);
+      } finally {
+        setLoading(false);  // Stop loading
       }
     };
 
@@ -74,6 +81,12 @@ export default function FavoritesPage() {
   };
 
   // Render fallback if there are no favorites
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50"> <div className="flex flex-col items-center"> <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div> <h2 className="text-center text-lg font-semibold">Loading...</h2> <p className="w-1/2 text-center text-gray-500">Please wait while we prepare everything for you.</p> </div> </div>
+    );
+  }
+
   if (!favorites.length) {
     return (
       <p className="text-center text-gray-600 mt-6">

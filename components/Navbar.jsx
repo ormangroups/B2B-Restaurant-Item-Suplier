@@ -131,49 +131,51 @@ function Navbar() {
 
       {/* Responsive Menu for Smaller Screens */}
       {menuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex justify-center items-center">
-          <div className="relative bg-white w-4/5 h-4/5 md:w-1/2 md:h-3/4 rounded-lg shadow-lg overflow-hidden">
-            <button className="absolute top-4 right-4 text-gray-700" onClick={toggleMenu}>
-              <FaTimes className="text-3xl hover:text-red-500 transition duration-200" />
-            </button>
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                <span className="text-red-500">Quick</span> Menu
-              </h2>
-              <ul className="space-y-6">
-                <li>
-                  <Link href="/main/profile" className="flex items-center text-gray-700 hover:text-red-500">
-                    <FaUser className="mr-4 text-xl" /> Outlet Information
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/main/payments" className="flex items-center text-gray-700 hover:text-red-500">
-                    <FaWallet className="mr-4 text-xl" /> Payment Settlement
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/main/orders" className="flex items-center text-gray-700 hover:text-red-500">
-                    <FaHistory className="mr-4 text-xl" /> Order History
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="flex items-center text-gray-700 hover:text-red-500"
-                    onClick={() => {
-                      Cookies.remove("userData");
-                      Cookies.remove("restaurantData");
-                      router.push("/");
-                    }}
-                  >
-                    <FaSignOutAlt className="mr-4 text-xl" /> Logout
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex justify-center items-center">
+  <div className="relative bg-white w-4/5 h-4/5 md:w-1/2 md:h-3/4 rounded-lg shadow-lg overflow-hidden">
+    <button className="absolute top-4 right-4 text-gray-700" onClick={toggleMenu}>
+      <FaTimes className="text-3xl hover:text-red-500 transition duration-200" />
+    </button>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">
+        <span className="text-red-500">Quick</span> Menu
+      </h2>
+      <ul className="space-y-6">
+        <li>
+          <Link href="/main/profile" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+            <FaUser className="mr-4 text-xl" /> Outlet Information
+          </Link>
+        </li>
+        <li>
+          <Link href="/main/payments" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+            <FaWallet className="mr-4 text-xl" /> Payment Settlement
+          </Link>
+        </li>
+        <li>
+          <Link href="/main/orders" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+            <FaHistory className="mr-4 text-xl" /> Order History
+          </Link>
+        </li>
+        <li>
+          <button
+            className="flex items-center text-gray-700 hover:text-red-500 w-full text-left"
+            onClick={() => {
+              Cookies.remove("userData");
+              Cookies.remove("restaurantData");
+              router.push("/");
+              toggleMenu();
+            }}
+          >
+            <FaSignOutAlt className="mr-4 text-xl" /> Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+)}
+
 
       {/* Bottom Navbar for Small Screens */}
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden">

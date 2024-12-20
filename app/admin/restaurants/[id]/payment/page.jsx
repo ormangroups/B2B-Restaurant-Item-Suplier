@@ -1,14 +1,17 @@
 "use client";
+import { use } from "react";
 import React, { useState, useEffect } from "react";
 import api from "@/app/api/mainapi"; // Assuming Axios instance is in this file
 
-const PaymentPage = ({ params }) => {
+const PaymentPage = ({ params: paramsPromise }) => {
+  const params = use(paramsPromise);
   const { id } = params; // Restaurant ID
   const [restaurant, setRestaurant] = useState(null);
   const [newPayment, setNewPayment] = useState({
     amount: "",
     date: "",
   });
+  const [error, setError] = useState("");
 
   // Fetch restaurant by ID
   useEffect(() => {
@@ -28,42 +31,49 @@ const PaymentPage = ({ params }) => {
 
   const handleAddPayment = async (e) => {
     e.preventDefault();
-    const amount = parseFloat(newPayment.amount);
-    const date = newPayment.date;
+    const amountPaid = parseFloat(newPayment.amount);
+    const transactionDate = `${newPayment.date}T00:00:00`; // Adding time portion to match LocalDateTime
 
-    if (!amount || !date) {
-      alert("Please fill in both the amount and date.");
+    if (!amountPaid || !transactionDate) {
+      setError("Please fill in both the amount and date.");
       return;
     }
 
-    const pendingAmount = restaurant?.pendingAmount || 0;
-    if (amount > pendingAmount) {
-      alert("Payment amount exceeds the pending amount.");
+    const pendingAmount = restaurant?.payment?.pendingAmount || 0;
+
+    if (amountPaid > pendingAmount) {
+      setError("Payment amount exceeds the pending amount.");
       return;
     }
 
     try {
-      const paymentTransaction = { amount, date };
+      const paymentTransaction = { amountPaid, transactionDate };
+
+      // Call the API to create the payment transaction
       await api.createPaymentTransaction(id, paymentTransaction);
 
       // Update restaurant payment details
       setRestaurant((prevRestaurant) => ({
         ...prevRestaurant,
-        pendingAmount: prevRestaurant.pendingAmount - amount,
-        paidAmount: prevRestaurant.paidAmount + amount,
-        pastSettlements: [
-          ...prevRestaurant.pastSettlements,
-          paymentTransaction,
-        ],
+        payment: {
+          ...prevRestaurant.payment,
+          pendingAmount: prevRestaurant.payment.pendingAmount - amountPaid,
+          paidAmount: prevRestaurant.payment.paidAmount + amountPaid,
+          pastSettlements: [
+            ...prevRestaurant.payment.pastSettlements,
+            paymentTransaction,
+          ],
+        },
       }));
 
-      // Clear form
+      // Clear error and form
+      setError("");
       setNewPayment({ amount: "", date: "" });
 
       alert("Payment added successfully!");
     } catch (error) {
       console.error("Error adding payment:", error);
-      alert("Failed to add payment.");
+      setError("Failed to add payment.");
     }
   };
 
@@ -77,9 +87,16 @@ const PaymentPage = ({ params }) => {
         Payment Settlement for Restaurant {id}
       </h1>
 
+      {/* Display error if any */}
+      {error && (
+        <div className="bg-red-100 text-red-800 font-bold text-lg px-6 py-4 rounded-lg shadow">
+          {error}
+        </div>
+      )}
+
       {/* Pending Amount */}
       <div className="bg-red-100 text-red-800 font-bold text-lg px-6 py-4 rounded-lg shadow">
-        Pending Amount:₹‎{restaurant.payment.pendingAmount}
+        Pending Amount: ₹‎{restaurant.payment.pendingAmount}
       </div>
 
       {/* Add New Payment */}
@@ -125,16 +142,18 @@ const PaymentPage = ({ params }) => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Previous Settlements
         </h2>
-        {restaurant?.pastSettlements?.length > 0 ? (
+        {restaurant?.payment?.pastSettlements?.length > 0 ? (
           <ul className="space-y-4">
-            {restaurant.pastSettlements.map((settlement, index) => (
+            {restaurant.payment.pastSettlements.map((settlement, index) => (
               <li
                 key={index}
                 className="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
               >
                 <div>
-                  <h3 className="font-bold text-gray-800">${settlement.amount}</h3>
-                  <span className="text-gray-500 text-sm">{settlement.date}</span>
+                  <h3 className="font-bold text-gray-800">₹ {settlement.amountPaid}</h3>
+                  <span className="text-gray-500 text-sm">
+                    {settlement.transactionDate}
+                  </span>
                 </div>
                 <span className="text-green-600 font-medium">Paid</span>
               </li>
