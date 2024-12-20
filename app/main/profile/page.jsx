@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaSave, FaMapMarkerAlt, FaPhone, FaStore, FaEnvelope } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import api from "@/app/api/mainapi"; // Import your API instance
+import api from "@/app/api/mainapi";// Import your API instance
 
 const EditableField = ({ icon, label, name, value, isEditing, onChange }) => (
   <div className="flex items-center">
