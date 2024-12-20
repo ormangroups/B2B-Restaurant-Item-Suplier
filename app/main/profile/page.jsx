@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie"; // Import js-cookie
 import { FaEdit, FaSave, FaMapMarkerAlt, FaPhone, FaStore, FaEnvelope } from "react-icons/fa";
-import { useDispatch ,useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import api from "@/app/api/mainapi"; // Import your API instance
 
 const EditableField = ({ icon, label, name, value, isEditing, onChange }) => (
@@ -28,18 +27,31 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
 
-  // Fetch data from cookies
-  const restaurantData = Cookies.get("restaurantData") ? JSON.parse(Cookies.get("restaurantData")) : {};
-
   // Local state for editing
   const [restaurantInfo, setRestaurantInfo] = useState({
-    restaurantName: restaurantData.restaurantName || "",
-    restaurantAddress: restaurantData.restaurantAddress || "",
-    contactNumber: restaurantData.contactNumber || "",
-    email: restaurantData.email || "",
-    GSTIN: restaurantData.GSTIN || "",
+    restaurantName: "",
+    restaurantAddress: "",
+    contactNumber: "",
+    email: "",
+    GSTIN: "",
     password: "", // Password should remain blank unless explicitly edited
   });
+
+  // Fetch restaurant data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.getRestaurantById(restaurantId);
+        setRestaurantInfo(response.data);
+      } catch (error) {
+        console.error("Failed to fetch restaurant information:", error.message);
+      }
+    };
+
+    if (restaurantId) {
+      fetchData();
+    }
+  }, [restaurantId]);
 
   // Handle Input Changes
   const handleChange = (e) => {
@@ -51,11 +63,8 @@ const ProfilePage = () => {
   const handleSave = async () => {
     try {
       // API call to update the restaurant information
-      await api.updateRestaurant(restaurantId,restaurantInfo);
+      await api.updateRestaurant(restaurantId, restaurantInfo);
       setIsEditing(false);
-
-      // Update cookies with the new data
-      Cookies.set("restaurantData", JSON.stringify(restaurantInfo));
 
       // Dispatch updated restaurant data to Redux
       dispatch({ type: "UPDATE_RESTAURANT", payload: restaurantInfo });
