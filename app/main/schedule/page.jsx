@@ -78,7 +78,7 @@ const DailyOrders = () => {
                   <div key={product.id} className="flex items-center justify-between">
                     <div>
                       <span className="font-medium">{product.name}</span>
-                      <span className="text-gray-500"> - ${product.price}</span>
+                      <span className="text-gray-500"> - ₹{product.price}</span>
                     </div>
                     <div className="flex items-center">
                       <input
@@ -86,13 +86,13 @@ const DailyOrders = () => {
                         className="border p-1 w-16 mr-2"
                         min="1"
                         defaultValue={1}
-                        id={`quantity-${product.id}`}
+                        id={`quantity-₹{product.id}`}
                       />
                       <button
                         onClick={() =>
                           addProductToSchedule(
                             product,
-                            Number(document.getElementById(`quantity-${product.id}`).value)
+                            Number(document.getElementById(`quantity-₹{product.id}`).value)
                           )
                         }
                         className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
