@@ -215,7 +215,6 @@ function Navbar() {
         >
           <div className="relative">
             <FaShoppingCart className="text-xl" />
-           =
           </div>
           <span className="text-xs">Cart</span>
         </button>
