@@ -114,11 +114,7 @@ function Navbar() {
             >
               <div className="relative">
                 <FaShoppingCart className="text-xl" />
-                {cartQuantity > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">
-                    {cartQuantity}
-                  </span>
-                )}
+                
               </div>
               <span>Cart</span>
             </button>
@@ -219,11 +215,7 @@ function Navbar() {
         >
           <div className="relative">
             <FaShoppingCart className="text-xl" />
-            {cartQuantity > 0 && (
-              <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">
-                {cartQuantity}
-              </span>
-            )}
+           =
           </div>
           <span className="text-xs">Cart</span>
         </button>
