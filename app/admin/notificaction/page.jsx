@@ -76,11 +76,11 @@ const AdminNotificationPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Admin Notification Center</h1>
+    <div className="container mx-auto  sm:p-6 md:p-8 bg-gray-50">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6">Admin Notification Center</h1>
 
       {/* Notification Form */}
-      <div className="bg-white p-4 shadow-lg rounded-lg mb-6">
+      <div className="bg-white p-4 sm:p-6 md:p-8 shadow-lg rounded-lg mb-6">
         <h2 className="text-xl font-bold mb-4">Send Notification</h2>
         <div className="mb-4">
           <textarea
@@ -134,46 +134,46 @@ const AdminNotificationPage = () => {
         {/* Send Notification Button */}
         <button
           onClick={handleSendNotification}
-          className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
+          className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 w-full sm:w-auto"
         >
           Send Notification
         </button>
       </div>
 
       {/* Sent Notifications */}
-      <div className="bg-white p-4 shadow-lg rounded-lg">
+      <div className="bg-white p-4 sm:p-6 md:p-8 shadow-lg rounded-lg">
         <h2 className="text-xl font-bold mb-4">Sent Notifications</h2>
-        <table className="min-w-full table-auto border-collapse">
-          <thead>
-            <tr>
-              <th className="px-4 py-2 border">Date</th>
-              <th className="px-4 py-2 border">Message</th>
-              <th className="px-4 py-2 border">Target</th>
-            </tr>
-          </thead>
-          <tbody>
-  {sentNotifications.map((notification) => {
-    // Find the restaurant name based on recipientId
-    const restaurantName = notification.recipientId
-      ? restaurants.find((r) => r.id === notification.recipientId)?.restaurantName
-      : null;
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 border">Date</th>
+                <th className="px-4 py-2 border">Message</th>
+                <th className="px-4 py-2 border">Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sentNotifications.map((notification) => {
+                // Find the restaurant name based on recipientId
+                const restaurantName = notification.recipientId
+                  ? restaurants.find((r) => r.id === notification.recipientId)?.restaurantName
+                  : null;
 
-    return (
-      <tr key={notification.id}>
-        <td className="px-4 py-2 border">{notification.timestamp}</td>
-        <td className="px-4 py-2 border">{notification.message}</td>
-        <td className="px-4 py-2 border">
-          {notification.recipientId === null
-            ? "All Restaurants"
-            : restaurantName || notification.target || notification.recipientId}
-        </td>
-      </tr>
-    );
-  })}
-</tbody>
-
-
-        </table>
+                return (
+                  <tr key={notification.id}>
+                    <td className="px-4 py-2 border">{notification.timestamp}</td>
+                    <td className="px-4 py-2 border">{notification.message}</td>
+                    <td className="px-4 py-2 border">
+                      {notification.recipientId === null
+                        ? "All Restaurants"
+                        : restaurantName || notification.target || notification.recipientId}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

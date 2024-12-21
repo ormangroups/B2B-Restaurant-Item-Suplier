@@ -36,7 +36,7 @@ const PaymentSettlement = () => {
   }, [restaurantId]);
 
   if (!restaurantDetails) {
-    return(     <div className="fixed inset-0 flex items-center justify-center bg-white z-50"> <div className="flex flex-col items-center"> <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div> <h2 className="text-center text-lg font-semibold">Loading...</h2> <p className="w-1/2 text-center text-gray-500">Please wait while we prepare everything for you.</p> </div> </div>); // Loading state while the data is being fetched
+    return(     <div className="fixed inset-0 flex items-center justify-center bg-white "> <div className="flex flex-col items-center"> <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div> <h2 className="text-center text-lg font-semibold">Loading...</h2> <p className="w-1/2 text-center text-gray-500">Please wait while we prepare everything for you.</p> </div> </div>); // Loading state while the data is being fetched
   }
 
   return (
@@ -92,7 +92,7 @@ const PaymentSettlement = () => {
                       className="border-b hover:bg-gray-50 transition"
                     >
                       <td className="px-4 py-3">{settlement.transactionDate}</td>
-                      <td className="px-4 py-3">${settlement.amountPaid}</td>
+                      <td className="px-4 py-3">₹‎{settlement.amountPaid}</td>
                       <td className="px-4 py-3">{settlement.id}</td>
                     </tr>
                   ))}

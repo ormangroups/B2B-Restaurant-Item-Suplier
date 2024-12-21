@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import "../styles/global.css";
 import Cookies from "js-cookie";
+import { MdSchedule } from "react-icons/md";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -150,6 +151,11 @@ function Navbar() {
         <li>
           <Link href="/main/orders" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
             <FaHistory className="mr-4 text-xl" /> Order History
+          </Link>
+        </li>
+        <li>
+          <Link href="/main/schedule" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+          <MdSchedule className="mr-4 text-xl" />Daily Orders
           </Link>
         </li>
         <li>

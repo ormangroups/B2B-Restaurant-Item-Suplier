@@ -32,7 +32,8 @@ const cartSlice = createSlice({
     },
     // Remove an item from the cart (if needed)
     removeCartItem: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload.id);
+      // Filter items based on the id directly from the payload
+      state.items = state.items.filter((item) => item.id !== action.payload);
     },
   },
 });

@@ -82,9 +82,9 @@ const PaymentPage = ({ params: paramsPromise }) => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto p-2 space-y-8">
       <h1 className="text-3xl font-extrabold text-gray-800">
-        Payment Settlement for Restaurant {id}
+        Payment Settlement for Restaurant 
       </h1>
 
       {/* Display error if any */}
