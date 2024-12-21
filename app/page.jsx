@@ -19,8 +19,7 @@ const Page = () => { // Capitalize the component name
     { title: "Efficiency", description: "Streamlined procurement and fast delivery." },
     { title: "Quality", description: "Wide range of high-quality, fresh products." },
   ];
-  Archisman Hota ( co-founder)
-  Subhrajit Rout (co-founder)
+ 
   const teamMembers = [
     { name: "Archisman Hota", role: "Co-Founder", image: "https://via.placeholder.com/150" },
     { name: "Subhrajit Rout ", role: "Co-Founder", image: "https://via.placeholder.com/150" },

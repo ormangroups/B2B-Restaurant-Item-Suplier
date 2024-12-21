@@ -101,7 +101,6 @@ const toggleFavorite = async (product) => {
       // Update Redux state
       dispatch(setCartItems(updatedCart));
 
-      alert("Item added to cart!");
     } catch (error) {
       console.error("Failed to add to cart:", error.message);
     }
