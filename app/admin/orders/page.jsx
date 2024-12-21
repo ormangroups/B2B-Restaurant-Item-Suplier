@@ -52,11 +52,7 @@ const AdminOrdersPage = () => {
     try {
       const updatedOrder = { ...selectedOrder, status: newStatus }; // Include the full order
       await api.updateOrder(orderId, updatedOrder); // Send the updated order to the backend
-      setOrders((prev) =>
-        prev.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
+      setOrders((prev) => prev.filter((order) => order.id !== orderId)); // Remove the updated order from the current state
       setSelectedOrder(null); // Close the modal after updating
     } catch (err) {
       setError("Failed to update order status.");
@@ -190,16 +186,16 @@ const AdminOrdersPage = () => {
             </ul>
             <div className="mt-4">
               <button
-                onClick={() => handleStatusUpdate(selectedOrder.id, "Shipped")}
-                className="bg-yellow-500 text-white px-4 py-2 rounded mr-2"
-              >
-                Mark as Shipped
-              </button>
-              <button
                 onClick={() => handleStatusUpdate(selectedOrder.id, "Delivered")}
-                className="bg-green-500 text-white px-4 py-2 rounded"
+                className="bg-green-500 text-white px-4 py-2 rounded mr-2"
               >
                 Mark as Delivered
+              </button>
+              <button
+                onClick={() => handleStatusUpdate(selectedOrder.id, "Cancelled")}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Cancel Order
               </button>
             </div>
           </div>

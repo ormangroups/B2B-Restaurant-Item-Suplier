@@ -12,7 +12,7 @@ const getAuthHeaders = () => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'https://orman-backend.onrender.com', // Replace with your actual base URL
+  baseURL: 'https://www.ormanindia.com', // Replace with your actual base URL
 });
 
 // Request interceptor to attach Basic Auth headers dynamically
@@ -212,10 +212,16 @@ export const api = {
         return response.data; // List of notifications with null recipientId
       
     },
-    login:async()=>{
-      const response = await axiosInstance.post("/public/login");
+    getDailyScheduledOrders: async (restaurantId) => {
+       const response = await axiosInstance.get(`/api/daily-scheduled-orders/${restaurantId}`); return response.data; 
+      }, 
+    addToDailyScheduledOrders: async (restaurantId, orderItem) => {
+       const response = await axiosInstance.post(`/api/daily-scheduled-orders/${restaurantId}`, orderItem); return response.data; 
+    },
+    removeFromDailyScheduledOrders: async (restaurantId, productId) => { 
+      const response = await axiosInstance.delete(`/api/daily-scheduled-orders/${restaurantId}/${productId}`); 
       return response.data;
-    }
+     },
 
 };
 

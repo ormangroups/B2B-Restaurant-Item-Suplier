@@ -34,6 +34,19 @@ const OrderHistory = () => {
     fetchOrders();
   }, [restaurantId]);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "DELIVERED":
+        return "bg-green-500";
+      case "PENDING":
+        return "bg-yellow-500";
+      case "CANCELLED":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
@@ -55,7 +68,7 @@ const OrderHistory = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-2 mb-8 md:mb-11">
       <h1 className="text-3xl font-bold text-gray-900">Order history</h1>
       <p className="text-gray-500 mt-2">
         Check the status of recent orders, manage returns, and discover similar products.
@@ -66,13 +79,15 @@ const OrderHistory = () => {
             <div key={index} className="bg-white shadow rounded-lg p-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-medium text-gray-900">Order ID: {order.id}</h2>
-                <span className="px-2 py-1 rounded text-white bg-red-500">{order.status}</span>
+                <span className={`px-2 py-1 rounded text-white ${getStatusColor(order.status)}`}>
+                  {order.status}
+                </span>
               </div>
               <div className="space-y-4 h-48 overflow-y-auto">
                 {order.items.map((item, idx) => (
                   <div key={idx} className="flex items-start space-x-4">
                     <img
-                      src={item.product.image}
+                      src={item.product.image || "https://placehold.co/100x100"}
                       alt={`${item.product.name} image`}
                       className="w-20 h-20 object-cover rounded-lg"
                     />
