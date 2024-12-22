@@ -1,17 +1,16 @@
 "use client";
+import React, { useState, useEffect } from 'react';
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./redux/store";
 import Cookies from 'js-cookie';
 import { setUserData } from './redux/slices/userSlice';
 import { setRestaurantDetails } from './redux/slices/restaurantSlice';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useDispatch } from "react-redux";
 
 // Separate component for the layout content
-function LayoutContent({ children }) {
+function LayoutContent({ children, isLoggedIn, setIsLoggedIn }) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -24,7 +23,8 @@ function LayoutContent({ children }) {
     if (userData && !hasRedirected) {
       dispatch(setUserData(userData));
       localStorage.setItem('hasRedirected', 'true');
-      
+      setIsLoggedIn(true);
+
       if (userData.role === "ADMIN") {
         router.push('/admin');
       } else {
@@ -34,16 +34,17 @@ function LayoutContent({ children }) {
     } else if (userData) {
       // If the user data is present but the user has already been redirected, just update the state without redirecting
       dispatch(setUserData(userData));
+      setIsLoggedIn(true);
       if (userData.role !== "ADMIN") {
         dispatch(setRestaurantDetails(restaurantData));
       }
     }
 
-  }, [dispatch, router]);
+  }, [dispatch, router, setIsLoggedIn]);
 
   return (
     <>
-      <Navbar />
+      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <div className="min-h-screen">{children}</div>
       <Footer />
     </>
@@ -51,12 +52,14 @@ function LayoutContent({ children }) {
 }
 
 export default function RootLayout({ children }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <Provider store={store}>
       <html lang="en">
         <body>
           {/* Render content only after Provider is available */}
-          <LayoutContent>{children}</LayoutContent>
+          <LayoutContent isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>{children}</LayoutContent>
         </body>
       </html>
     </Provider>
