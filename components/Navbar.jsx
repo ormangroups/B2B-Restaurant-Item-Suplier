@@ -18,7 +18,7 @@ import "../styles/global.css";
 import Cookies from "js-cookie";
 import { MdSchedule } from "react-icons/md";
 
-function Navbar({ isLoggedIn, setIsLoggedIn }) {
+function Navbar({ isLoggedIn, loginRole }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeButton, setActiveButton] = useState("shop"); // Default active button
   const [cartQuantity] = useState(4); // Example cart quantity
@@ -49,7 +49,7 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
   };
 
   // If role is ADMIN, don't render the Navbar
-  if (role === "ADMIN") return null;
+  if (loginRole==="ADMIN"||role === "ADMIN") return null;
 
   // If user is not logged in, render only login button
   if (!isLoggedIn || role === null) {
