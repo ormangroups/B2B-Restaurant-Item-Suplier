@@ -10,7 +10,7 @@ import { setRestaurantDetails } from './redux/slices/restaurantSlice';
 import { useRouter } from 'next/navigation';
 
 // Separate component for the layout content
-function LayoutContent({ children, isLoggedIn, setIsLoggedIn }) {
+function LayoutContent({ children, isLoggedIn, setIsLoggedIn ,loginRole,setLoginRole}) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -26,7 +26,9 @@ function LayoutContent({ children, isLoggedIn, setIsLoggedIn }) {
       setIsLoggedIn(true);
 
       if (userData.role === "ADMIN") {
+        setLoginRole("ADMIN");
         router.push('/admin');
+        
       } else {
         dispatch(setRestaurantDetails(restaurantData));
         router.push('/main');
