@@ -11,32 +11,33 @@ import {
   FaHistory,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { MdSchedule } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import Cookies from "js-cookie";
 import "../styles/global.css";
+import Cookies from "js-cookie";
+import { MdSchedule } from "react-icons/md";
 
-function Navbar({ isLoggedIn, loginRole }) {
+function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeButton, setActiveButton] = useState("shop"); // Default active button
+  const [activeButton, setActiveButton] = useState("shop");
+  const [cartQuantity] = useState(4);
+  const [hasNotifications] = useState(true);
   const router = useRouter();
 
-  // Get role from Redux store
   const role = useSelector((state) => state.user.role);
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
-    setMenuOpen(false); // Close menu when a button is clicked
+    setMenuOpen(false);
   };
 
   const handleLogin = () => router.push("/login");
   const openCart = () => router.push("/main/cart");
   const goToMain = () => router.push("/main");
-  const openFavorite = () => router.push("/main/favorites");
+  const openFavorite = () => router.push("/main/favorities");
   const openNotification = () => router.push("/main/notifications");
 
   const handleLogout = () => {
@@ -45,18 +46,16 @@ function Navbar({ isLoggedIn, loginRole }) {
     router.push("/");
   };
 
-  // Prevent rendering Navbar for ADMIN role
-  if (loginRole === "ADMIN" || role === "ADMIN") return null;
+  if (role === "ADMIN") return null;
 
-  // Render only login button for non-logged-in users
-  if (!isLoggedIn || !role) {
+  if (role === null) {
     return (
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30 flex justify-between items-center px-6 py-4">
         <Link href="/">
           <img
             src="https://i.imgur.com/nCjPRTB.png"
             alt="Orman logo"
-            className="h-9 transition-transform duration-300 ease-in-out transform hover:scale-110"
+            className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110"
           />
         </Link>
         <button
@@ -71,19 +70,17 @@ function Navbar({ isLoggedIn, loginRole }) {
 
   return (
     <div className="relative">
-      {/* Navbar for All Devices */}
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
         <div className="flex justify-between items-center px-6 py-4">
-          {/* Left: Brand Logo */}
-          <Link href="/">
-            <img
-              src="https://i.imgur.com/nCjPRTB.png"
-              alt="Orman logo"
-              className="h-9 transition-transform duration-300 ease-in-out transform hover:scale-110"
-            />
-          </Link>
-
-          {/* Desktop Navigation Buttons */}
+          <div>
+            <Link href="/">
+              <img
+                src="https://i.imgur.com/nCjPRTB.png"
+                alt="Orman logo"
+                className="h-9 md:h-9 lg:h-10 max-w-full transition-transform duration-300 ease-in-out transform hover:scale-110"
+              />
+            </Link>
+          </div>
           <div className="hidden lg:flex space-x-8">
             <button
               onClick={() => {
@@ -118,23 +115,37 @@ function Navbar({ isLoggedIn, loginRole }) {
                 activeButton === "notification" ? "text-red-500" : "text-gray-700"
               } hover:text-red-500`}
             >
-              <FaBell className="text-xl" />
+              <FaBell className="text-xl relative">
+                {hasNotifications && (
+                  <span className="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full"></span>
+                )}
+              </FaBell>
               <span>Notify</span>
             </button>
             <button
-              onClick={toggleMenu}
-              className="text-gray-700 hover:text-red-500"
+              onClick={() => {
+                handleButtonClick("cart");
+                openCart();
+              }}
+              className={`relative flex items-center space-x-2 ${
+                activeButton === "cart" ? "text-red-500" : "text-gray-700"
+              } hover:text-red-500`}
             >
+              <div className="relative">
+                <FaShoppingCart className="text-xl" />
+              </div>
+              <span>Cart</span>
+            </button>
+            <button onClick={toggleMenu} className="text-gray-700 hover:text-red-500">
               <FaBars className="text-xl" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Responsive Menu for Smaller Screens */}
       {menuOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex justify-center items-center">
-          <div className="relative bg-white w-4/5 md:w-1/2 rounded-lg shadow-lg overflow-hidden">
+          <div className="relative bg-white w-4/5 h-4/5 md:w-1/2 md:h-3/4 rounded-lg shadow-lg overflow-hidden">
             <button
               className="absolute top-4 right-4 text-gray-700"
               onClick={toggleMenu}
@@ -185,7 +196,12 @@ function Navbar({ isLoggedIn, loginRole }) {
                 <li>
                   <button
                     className="flex items-center text-gray-700 hover:text-red-500 w-full text-left"
-                    onClick={handleLogout}
+                    onClick={() => {
+                      Cookies.remove("userData");
+                      Cookies.remove("restaurantData");
+                      router.push("/");
+                      toggleMenu();
+                    }}
                   >
                     <FaSignOutAlt className="mr-4 text-xl" /> Logout
                   </button>
@@ -196,7 +212,6 @@ function Navbar({ isLoggedIn, loginRole }) {
         </div>
       )}
 
-      {/* Bottom Navbar for Small Screens */}
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden z-40">
         <button
           onClick={() => {
@@ -227,11 +242,14 @@ function Navbar({ isLoggedIn, loginRole }) {
             handleButtonClick("notification");
             openNotification();
           }}
-          className={`flex flex-col items-center ${
+          className={`relative flex flex-col items-center ${
             activeButton === "notification" ? "text-red-500" : "text-gray-700"
           } hover:text-red-500`}
         >
           <FaBell className="text-xl" />
+          {hasNotifications && (
+            <span className="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full"></span>
+          )}
           <span className="text-xs">Notify</span>
         </button>
         <button
@@ -257,5 +275,3 @@ function Navbar({ isLoggedIn, loginRole }) {
     </div>
   );
 }
-
-export default Navbar;
