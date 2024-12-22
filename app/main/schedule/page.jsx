@@ -7,11 +7,13 @@ const DailyOrders = () => {
   const [products, setProducts] = useState([]);
   const [scheduledProducts, setScheduledProducts] = useState([]);
   const [categories, setCategories] = useState({});
-  const [quantities, setQuantities] = useState({});
+  const [quantities, setQuantities] = useState({}); // State to manage quantities
+  const [loading, setLoading] = useState(true); // Loading state
   const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Start loading
       try {
         // Fetch all products
         const productsData = await api.getAllProducts();
@@ -26,18 +28,20 @@ const DailyOrders = () => {
         }, {});
         setCategories(categorizedProducts);
 
-        // Fetch scheduled products
-        const scheduledData = await api.getDailyScheduledOrders(restaurantId);
-        setScheduledProducts(scheduledData);
-
-        // Initialize quantities state
+        // Initialize quantities for all products
         const initialQuantities = productsData.reduce((acc, product) => {
-          acc[product.id] = 1; // Default quantity is 1
+          acc[product.id] = 1; // Default quantity to 1
           return acc;
         }, {});
         setQuantities(initialQuantities);
+
+        // Fetch scheduled products
+        const scheduledData = await api.getDailyScheduledOrders(restaurantId);
+        setScheduledProducts(scheduledData);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // End loading
       }
     };
 
@@ -45,9 +49,9 @@ const DailyOrders = () => {
   }, [restaurantId]);
 
   const handleQuantityChange = (productId, value) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [productId]: Math.max(1, Number(value)), // Ensure quantity is at least 1
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: value,
     }));
   };
 
@@ -72,7 +76,9 @@ const DailyOrders = () => {
   const removeProductFromSchedule = async (productId) => {
     try {
       await api.removeFromDailyScheduledOrders(restaurantId, productId);
-      setScheduledProducts(scheduledProducts.filter((p) => p.product.id !== productId));
+      setScheduledProducts(
+        scheduledProducts.filter((p) => p.product.id !== productId)
+      );
     } catch (error) {
       console.error("Error removing from schedule:", error);
     }
@@ -82,7 +88,9 @@ const DailyOrders = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Daily Scheduled Orders</h1>
 
-      {Object.keys(categories).length === 0 ? (
+      {loading ? (
+        <p className="text-gray-600">Loading...</p> // Show loading indicator
+      ) : Object.keys(categories).length === 0 ? (
         <p className="text-gray-600">No products available. Please check back later.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -102,7 +110,9 @@ const DailyOrders = () => {
                         className="border p-1 w-16 mr-2"
                         min="1"
                         value={quantities[product.id] || 1}
-                        onChange={(e) => handleQuantityChange(product.id, e.target.value)}
+                        onChange={(e) =>
+                          handleQuantityChange(product.id, Number(e.target.value))
+                        }
                       />
                       <button
                         onClick={() => addProductToSchedule(product)}
@@ -120,7 +130,9 @@ const DailyOrders = () => {
       )}
 
       <h2 className="text-xl font-bold mt-6">Scheduled Products</h2>
-      {scheduledProducts.length === 0 ? (
+      {loading ? (
+         <div className="fixed inset-0 flex items-center justify-center bg-white "> <div className="flex flex-col items-center"> <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div> <h2 className="text-center text-lg font-semibold">Loading...</h2> <p className="w-1/2 text-center text-gray-500">Please wait while we prepare everything for you.</p> </div> </div>// Show loading indicator for scheduled products
+      ) : scheduledProducts.length === 0 ? (
         <p className="text-gray-600">No scheduled products yet.</p>
       ) : (
         <ul className="list-disc ml-6">
