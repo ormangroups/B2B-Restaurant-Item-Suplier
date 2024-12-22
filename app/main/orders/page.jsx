@@ -49,7 +49,7 @@ const OrderHistory = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-white ">
         <div className="flex flex-col items-center">
           <div className="loader ease-linear rounded-full border-8 border-t-8 border-red-400 h-16 w-16 mb-4"></div>
           <h2 className="text-center text-lg font-semibold">Loading...</h2>
