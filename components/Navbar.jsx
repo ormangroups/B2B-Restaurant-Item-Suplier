@@ -151,7 +151,6 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
           </div>
         </div>
       </div>
-
       {/* Responsive Menu for Smaller Screens */}
       {menuOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex justify-center items-center">
