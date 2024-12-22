@@ -63,7 +63,7 @@ function Navbar({ isLoggedIn, loginRole }) {
       </div>
     );
   }
-
+if (loginRole === "USER" || role === "USER"){
   return (
     <div className="relative">
       {/* Navbar for All Devices */}
@@ -231,7 +231,7 @@ function Navbar({ isLoggedIn, loginRole }) {
         </button>
       </div>
     </div>
-  );
+  );}
 }
 
 export default Navbar;
