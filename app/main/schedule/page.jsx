@@ -102,7 +102,7 @@ const DailyOrders = () => {
                   <div key={product.id} className="flex items-center justify-between">
                     <div>
                       <span className="font-medium">{product.name}</span>
-                      <span className="text-gray-500"> - ${product.price}</span>
+                      <span className="text-gray-500"> - ₹{product.price}</span>
                     </div>
                     <div className="flex items-center">
                       <input
