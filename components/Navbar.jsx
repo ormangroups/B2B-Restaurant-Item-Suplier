@@ -18,12 +18,11 @@ import "../styles/global.css";
 import Cookies from "js-cookie";
 import { MdSchedule } from "react-icons/md";
 
-function Navbar() {
+function Navbar({ isLoggedIn, setIsLoggedIn }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeButton, setActiveButton] = useState("shop"); // Default active button
   const [cartQuantity] = useState(4); // Example cart quantity
   const [hasNotifications] = useState(true); // Example notification state
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // State to handle login status
   const router = useRouter();
 
   // Get role and user data from Redux store
@@ -73,7 +72,7 @@ function Navbar() {
     );
   }
 
-  // Render Navbar for Logged-In Users
+
   return (
     <div className="relative">
       {/* Navbar for All Devices */}
