@@ -23,7 +23,8 @@ const OrderHistory = () => {
         // Fetch orders for the restaurant
         const response = await api.getOrderById(restaurantId);
         console.log(response);
-        setOrders(response); // Assuming the response data contains the orders
+        const reversedOrders = response.reverse(); 
+      setOrders(reversedOrders); // Assuming the response data contains the orders
       } catch (error) {
         setError("Failed to fetch orders. Please try again.");
       } finally {
