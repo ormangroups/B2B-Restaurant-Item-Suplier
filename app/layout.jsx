@@ -19,20 +19,26 @@ function LayoutContent({ children }) {
     // Check for cookies on initial page load
     const userData = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
     const restaurantData = Cookies.get('restaurantData') ? JSON.parse(Cookies.get('restaurantData')) : {};
+    const hasRedirected = localStorage.getItem('hasRedirected');
 
-    if (userData) {
-      console.log(userData.username);
-console.log(userData.password);
+    if (userData && !hasRedirected) {
       dispatch(setUserData(userData));
-      if(userData.role==="ADMIN"){
+      localStorage.setItem('hasRedirected', 'true');
+      
+      if (userData.role === "ADMIN") {
         router.push('/admin');
-      }else{
-        console.log(restaurantData)
+      } else {
         dispatch(setRestaurantDetails(restaurantData));
-        router.push('/main'); 
+        router.push('/main');
+      }
+    } else if (userData) {
+      // If the user data is present but the user has already been redirected, just update the state without redirecting
+      dispatch(setUserData(userData));
+      if (userData.role !== "ADMIN") {
+        dispatch(setRestaurantDetails(restaurantData));
       }
     }
-    
+
   }, [dispatch, router]);
 
   return (
