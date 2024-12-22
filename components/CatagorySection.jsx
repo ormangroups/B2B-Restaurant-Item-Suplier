@@ -50,30 +50,33 @@ export const CategorySection = ({ title, constantPrice, products, onSeeAll }) =>
     fetchData();
   }, [restaurantId, dispatch]);
 
-  // Toggle favorite status for a product
-  // Toggle favorite status for a product
-const toggleFavorite = async (product) => {
-  try {
-    if (!restaurantId) throw new Error("Restaurant ID is not available.");
+  // Optimistically toggle favorite status for a product
+  const toggleFavorite = async (product) => {
+    try {
+      if (!restaurantId) throw new Error("Restaurant ID is not available.");
 
-    // Check if the product is already a favorite
-    const isFavorite = favorites.some((fav) => fav.id === product.id);
+      // Check if the product is already a favorite
+      const isFavorite = favorites.some((fav) => fav.id === product.id);
 
-    if (isFavorite) {
-      // Remove from favorites
-      await api.removeFavorite(restaurantId, product); // Ensure the API expects the product ID
-      dispatch(removeFavorite(product.id));
+      if (isFavorite) {
+        // Optimistically update state
+        dispatch(removeFavorite(product.id));
 
-    } else {
-      // Add to favorites
-      await api.addFavorite(restaurantId, product); // Ensure the API expects the product ID
-      dispatch(addFavorite(product));
+        // Remove from favorites via API
+        await api.removeFavorite(restaurantId, product);
+      } else {
+        // Optimistically update state
+        dispatch(addFavorite(product));
+
+        // Add to favorites via API
+        await api.addFavorite(restaurantId, product);
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error.message);
+      // Revert state update if API call fails
+      dispatch(setFavorites(await api.getFavoriteList(restaurantId)));
     }
-  } catch (error) {
-    console.error("Failed to toggle favorite:", error.message);
-  }
-};
-
+  };
 
   // Handle quantity change for products
   const handleQuantityChange = (id, change) => {
@@ -83,7 +86,7 @@ const toggleFavorite = async (product) => {
     }));
   };
 
-  // Add product to cart and update Redux state
+  // Optimistically add product to cart and update Redux state
   const handleAddToCart = async (product) => {
     try {
       if (!restaurantId) throw new Error("Restaurant ID is not available.");
@@ -91,6 +94,9 @@ const toggleFavorite = async (product) => {
       const quantity = selectedQuantity[product.id] || 1;
       const price = product.price * quantity;
       const orderItem = { product, quantity, price };
+
+      // Optimistically update state
+      dispatch(addToCart(orderItem));
 
       // Add item to the cart via API
       await api.addToCart(restaurantId, orderItem);
@@ -100,9 +106,10 @@ const toggleFavorite = async (product) => {
 
       // Update Redux state
       dispatch(setCartItems(updatedCart));
-
     } catch (error) {
       console.error("Failed to add to cart:", error.message);
+      // Revert state update if API call fails
+      dispatch(setCartItems(await api.getCartItems(restaurantId)));
     }
   };
 
