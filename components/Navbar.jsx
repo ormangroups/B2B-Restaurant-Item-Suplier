@@ -28,11 +28,16 @@ function Navbar({ isLoggedIn, loginRole }) {
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
-  const handleButtonClick = (button, path) => {
+  const handleButtonClick = (button) => {
     setActiveButton(button);
     setMenuOpen(false); // Close menu when a button is clicked
-    router.push(path);
   };
+
+  const handleLogin = () => router.push("/login");
+  const openCart = () => router.push("/main/cart");
+  const goToMain = () => router.push("/main");
+  const openFavorite = () => router.push("/main/favorites");
+  const openNotification = () => router.push("/main/notifications");
 
   const handleLogout = () => {
     Cookies.remove("userData");
@@ -40,11 +45,11 @@ function Navbar({ isLoggedIn, loginRole }) {
     router.push("/");
   };
 
-  // If role is ADMIN, don't render the Navbar
+  // Prevent rendering Navbar for ADMIN role
   if (loginRole === "ADMIN" || role === "ADMIN") return null;
 
-  // Render only login button if user is not logged in
-  if (!isLoggedIn || role === null) {
+  // Render only login button for non-logged-in users
+  if (!isLoggedIn || !role) {
     return (
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30 flex justify-between items-center px-6 py-4">
         <Link href="/">
@@ -55,7 +60,7 @@ function Navbar({ isLoggedIn, loginRole }) {
           />
         </Link>
         <button
-          onClick={() => router.push("/login")}
+          onClick={handleLogin}
           className="text-white bg-red-500 px-4 py-2 rounded hover:bg-red-600"
         >
           Login
@@ -63,12 +68,13 @@ function Navbar({ isLoggedIn, loginRole }) {
       </div>
     );
   }
-if (loginRole === "USER" || role === "USER"){
+
   return (
     <div className="relative">
       {/* Navbar for All Devices */}
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
         <div className="flex justify-between items-center px-6 py-4">
+          {/* Left: Brand Logo */}
           <Link href="/">
             <img
               src="https://i.imgur.com/nCjPRTB.png"
@@ -77,10 +83,13 @@ if (loginRole === "USER" || role === "USER"){
             />
           </Link>
 
-          {/* Large Screen Navigation */}
+          {/* Desktop Navigation Buttons */}
           <div className="hidden lg:flex space-x-8">
             <button
-              onClick={() => handleButtonClick("shop", "/main")}
+              onClick={() => {
+                handleButtonClick("shop");
+                goToMain();
+              }}
               className={`flex items-center space-x-2 ${
                 activeButton === "shop" ? "text-red-500" : "text-gray-700"
               } hover:text-red-500`}
@@ -89,7 +98,10 @@ if (loginRole === "USER" || role === "USER"){
               <span>Shop</span>
             </button>
             <button
-              onClick={() => handleButtonClick("favorite", "/main/favorites")}
+              onClick={() => {
+                handleButtonClick("favorite");
+                openFavorite();
+              }}
               className={`flex items-center space-x-2 ${
                 activeButton === "favorite" ? "text-red-500" : "text-gray-700"
               } hover:text-red-500`}
@@ -98,7 +110,10 @@ if (loginRole === "USER" || role === "USER"){
               <span>Favorite</span>
             </button>
             <button
-              onClick={() => handleButtonClick("notification", "/main/notifications")}
+              onClick={() => {
+                handleButtonClick("notification");
+                openNotification();
+              }}
               className={`relative flex items-center space-x-2 ${
                 activeButton === "notification" ? "text-red-500" : "text-gray-700"
               } hover:text-red-500`}
@@ -107,15 +122,9 @@ if (loginRole === "USER" || role === "USER"){
               <span>Notify</span>
             </button>
             <button
-              onClick={() => handleButtonClick("cart", "/main/cart")}
-              className={`relative flex items-center space-x-2 ${
-                activeButton === "cart" ? "text-red-500" : "text-gray-700"
-              } hover:text-red-500`}
+              onClick={toggleMenu}
+              className="text-gray-700 hover:text-red-500"
             >
-              <FaShoppingCart className="text-xl" />
-              <span>Cart</span>
-            </button>
-            <button onClick={toggleMenu} className="text-gray-700 hover:text-red-500">
               <FaBars className="text-xl" />
             </button>
           </div>
@@ -190,7 +199,10 @@ if (loginRole === "USER" || role === "USER"){
       {/* Bottom Navbar for Small Screens */}
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around items-center px-4 py-2 lg:hidden z-40">
         <button
-          onClick={() => handleButtonClick("shop", "/main")}
+          onClick={() => {
+            handleButtonClick("shop");
+            goToMain();
+          }}
           className={`flex flex-col items-center ${
             activeButton === "shop" ? "text-red-500" : "text-gray-700"
           } hover:text-red-500`}
@@ -199,7 +211,10 @@ if (loginRole === "USER" || role === "USER"){
           <span className="text-xs">Shop</span>
         </button>
         <button
-          onClick={() => handleButtonClick("favorite", "/main/favorites")}
+          onClick={() => {
+            handleButtonClick("favorite");
+            openFavorite();
+          }}
           className={`flex flex-col items-center ${
             activeButton === "favorite" ? "text-red-500" : "text-gray-700"
           } hover:text-red-500`}
@@ -208,8 +223,11 @@ if (loginRole === "USER" || role === "USER"){
           <span className="text-xs">Favorite</span>
         </button>
         <button
-          onClick={() => handleButtonClick("notification", "/main/notifications")}
-          className={`relative flex flex-col items-center ${
+          onClick={() => {
+            handleButtonClick("notification");
+            openNotification();
+          }}
+          className={`flex flex-col items-center ${
             activeButton === "notification" ? "text-red-500" : "text-gray-700"
           } hover:text-red-500`}
         >
@@ -217,21 +235,27 @@ if (loginRole === "USER" || role === "USER"){
           <span className="text-xs">Notify</span>
         </button>
         <button
-          onClick={() => handleButtonClick("cart", "/main/cart")}
-          className={`relative flex flex-col items-center ${
+          onClick={() => {
+            handleButtonClick("cart");
+            openCart();
+          }}
+          className={`flex flex-col items-center ${
             activeButton === "cart" ? "text-red-500" : "text-gray-700"
           } hover:text-red-500`}
         >
           <FaShoppingCart className="text-xl" />
           <span className="text-xs">Cart</span>
         </button>
-        <button onClick={toggleMenu} className="flex flex-col items-center text-gray-700 hover:text-red-500">
+        <button
+          onClick={toggleMenu}
+          className="flex flex-col items-center text-gray-700 hover:text-red-500"
+        >
           <FaBars className="text-xl" />
           <span className="text-xs">Menu</span>
         </button>
       </div>
     </div>
-  );}
+  );
 }
 
 export default Navbar;
