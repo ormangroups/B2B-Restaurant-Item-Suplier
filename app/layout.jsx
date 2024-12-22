@@ -1,43 +1,49 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import store from "./redux/store";
-import Cookies from "js-cookie";
-import { setUserData } from "./redux/slices/userSlice";
-import { setRestaurantDetails } from "./redux/slices/restaurantSlice";
-import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
+import { setUserData } from './redux/slices/userSlice';
+import { setRestaurantDetails } from './redux/slices/restaurantSlice';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useDispatch } from "react-redux";
 
-function LayoutContent({ children, isLoggedIn, setIsLoggedIn, loginRole, setLoginRole }) {
+// Separate component for the layout content
+function LayoutContent({ children }) {
   const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
-    const userData = Cookies.get("userData") ? JSON.parse(Cookies.get("userData")) : null;
-    const restaurantData = Cookies.get("restaurantData") ? JSON.parse(Cookies.get("restaurantData")) : {};
+    // Check for cookies on initial page load
+    const userData = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
+    const restaurantData = Cookies.get('restaurantData') ? JSON.parse(Cookies.get('restaurantData')) : {};
+    const hasRedirected = localStorage.getItem('hasRedirected');
 
-    if (userData) {
+    if (userData && !hasRedirected) {
       dispatch(setUserData(userData));
-      setIsLoggedIn(true);
-
+      localStorage.setItem('hasRedirected', 'true');
+      
       if (userData.role === "ADMIN") {
-        setLoginRole("ADMIN");
-        router.push("/admin");
+        router.push('/admin');
       } else {
-        setLoginRole("RESTAURANT");
         dispatch(setRestaurantDetails(restaurantData));
-        router.push("/main");
+        router.push('/main');
       }
-    } else {
-      setIsLoggedIn(false);
-      setLoginRole(null);
+    } else if (userData) {
+      // If the user data is present but the user has already been redirected, just update the state without redirecting
+      dispatch(setUserData(userData));
+      if (userData.role !== "ADMIN") {
+        dispatch(setRestaurantDetails(restaurantData));
+      }
     }
-  }, [dispatch, router, setIsLoggedIn, setLoginRole]);
+
+  }, [dispatch, router]);
 
   return (
     <>
-      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} loginRole={loginRole} />
+      <Navbar isLoggedIn={true} />
       <div className="min-h-screen">{children}</div>
       <Footer />
     </>
@@ -45,21 +51,12 @@ function LayoutContent({ children, isLoggedIn, setIsLoggedIn, loginRole, setLogi
 }
 
 export default function RootLayout({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginRole, setLoginRole] = useState(null);
-
   return (
     <Provider store={store}>
       <html lang="en">
         <body>
-          <LayoutContent
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={setIsLoggedIn}
-            loginRole={loginRole}
-            setLoginRole={setLoginRole}
-          >
-            {children}
-          </LayoutContent>
+          {/* Render content only after Provider is available */}
+          <LayoutContent>{children}</LayoutContent>
         </body>
       </html>
     </Provider>
