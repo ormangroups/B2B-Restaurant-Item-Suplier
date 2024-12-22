@@ -10,7 +10,7 @@ export const metadata = {
     site_name: 'Orman India',
     images: [
       {
-        url: 'https://www.ormanindia.com/images/og-image.jpg',
+        url: 'https://i.imgur.com/nCjPRTB.png',
         width: 800,
         height: 600,
         alt: 'Orman India B2B Marketplace',
