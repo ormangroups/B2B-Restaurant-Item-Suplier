@@ -7,6 +7,7 @@ const DailyOrders = () => {
   const [products, setProducts] = useState([]);
   const [scheduledProducts, setScheduledProducts] = useState([]);
   const [categories, setCategories] = useState({});
+  const [quantities, setQuantities] = useState({});
   const restaurantId = useSelector((state) => state.restaurant.restaurant?.id);
 
   useEffect(() => {
@@ -28,6 +29,13 @@ const DailyOrders = () => {
         // Fetch scheduled products
         const scheduledData = await api.getDailyScheduledOrders(restaurantId);
         setScheduledProducts(scheduledData);
+
+        // Initialize quantities state
+        const initialQuantities = productsData.reduce((acc, product) => {
+          acc[product.id] = 1; // Default quantity is 1
+          return acc;
+        }, {});
+        setQuantities(initialQuantities);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -36,7 +44,15 @@ const DailyOrders = () => {
     fetchData();
   }, [restaurantId]);
 
-  const addProductToSchedule = async (product, quantity) => {
+  const handleQuantityChange = (productId, value) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: Math.max(1, Number(value)), // Ensure quantity is at least 1
+    }));
+  };
+
+  const addProductToSchedule = async (product) => {
+    const quantity = quantities[product.id];
     if (quantity > 0) {
       const newScheduledProduct = {
         product,
@@ -63,7 +79,7 @@ const DailyOrders = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 mb-10">
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Daily Scheduled Orders</h1>
 
       {Object.keys(categories).length === 0 ? (
@@ -78,23 +94,18 @@ const DailyOrders = () => {
                   <div key={product.id} className="flex items-center justify-between">
                     <div>
                       <span className="font-medium">{product.name}</span>
-                      <span className="text-gray-500"> - ₹{product.price}</span>
+                      <span className="text-gray-500"> - ${product.price}</span>
                     </div>
                     <div className="flex items-center">
                       <input
                         type="number"
                         className="border p-1 w-16 mr-2"
                         min="1"
-                        defaultValue={1}
-                        id={`quantity-₹{product.id}`}
+                        value={quantities[product.id] || 1}
+                        onChange={(e) => handleQuantityChange(product.id, e.target.value)}
                       />
                       <button
-                        onClick={() =>
-                          addProductToSchedule(
-                            product,
-                            Number(document.getElementById(`quantity-₹{product.id}`).value)
-                          )
-                        }
+                        onClick={() => addProductToSchedule(product)}
                         className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                       >
                         Add
