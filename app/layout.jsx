@@ -43,7 +43,7 @@ function LayoutContent({ children }) {
 
   return (
     <>
-      <Navbar isLoggedIn={true} />
+      <Navbar />
       <div className="min-h-screen">{children}</div>
       <Footer />
     </>
