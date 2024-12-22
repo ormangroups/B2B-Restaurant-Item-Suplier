@@ -57,7 +57,7 @@ const MainSection = () => {
 
   // Render categories
   return (
-    <div className="p-6 bg-gray-50">
+    <div className="p-2 bg-gray-50">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Product Categories</h1>
       {Object.keys(productsByCategory).map((category) => {
         const { products, constantPrice } = productsByCategory[category];
