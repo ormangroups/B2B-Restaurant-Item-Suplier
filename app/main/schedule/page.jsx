@@ -85,7 +85,7 @@ const DailyOrders = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 mb-10 md:mb-11">
       <h1 className="text-2xl font-bold mb-4">Daily Scheduled Orders</h1>
 
       {loading ? (
