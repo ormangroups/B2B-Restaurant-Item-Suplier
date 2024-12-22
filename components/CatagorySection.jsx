@@ -60,13 +60,15 @@ export const CategorySection = ({ title, constantPrice, products, onSeeAll }) =>
 
       if (isFavorite) {
         // Optimistically update state
-        dispatch(removeFavorite(product.id));
+        const updatedFavorites = favorites.filter((fav) => fav.id !== product.id);
+        dispatch(setFavorites(updatedFavorites));
 
         // Remove from favorites via API
         await api.removeFavorite(restaurantId, product);
       } else {
         // Optimistically update state
-        dispatch(addFavorite(product));
+        const updatedFavorites = [...favorites, product];
+        dispatch(setFavorites(updatedFavorites));
 
         // Add to favorites via API
         await api.addFavorite(restaurantId, product);
@@ -122,12 +124,7 @@ export const CategorySection = ({ title, constantPrice, products, onSeeAll }) =>
             <span className="text-lg text-gray-600 ml-2">₹{constantPrice}</span>
           )}
         </h2>
-        <button
-          onClick={onSeeAll}
-          className="text-blue-600 hover:text-blue-800 transition font-medium text-base"
-        >
-          See All →
-        </button>
+       
       </div>
 
       <div className="flex overflow-x-auto space-x-6 scrollbar-hide">
