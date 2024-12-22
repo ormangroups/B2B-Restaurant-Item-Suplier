@@ -3,10 +3,11 @@ import React, { useState } from "react";
 import { FaShoppingCart, FaHeart, FaBell, FaUser, FaTimes, FaBars, FaWallet, FaHistory, FaSignOutAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import "../styles/global.css";
+import { useSelector, useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import { MdSchedule } from "react-icons/md";
+import { clearUserData } from "../redux/slices/userSlice";
+import { clearRestaurantDetails } from "../redux/slices/restaurantSlice";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ function Navbar() {
   const [cartQuantity, setCartQuantity] = useState(4); // Example cart quantity
   const [hasNotifications, setHasNotifications] = useState(true); // Example notification state
   const router = useRouter();
+  const dispatch = useDispatch();
 
   // Get role and user data from Redux store
   const role = useSelector((state) => state.user.role);
@@ -30,6 +32,14 @@ function Navbar() {
   const goToMain = () => router.push("/main");
   const openFavorite = () => router.push("/main/favorities");
   const openNotification = () => router.push("/main/notifications");
+
+  const handleLogout = () => {
+    Cookies.remove("userData");
+    Cookies.remove("restaurantData");
+    dispatch(clearUserData());
+    dispatch(clearRestaurantDetails());
+    router.push("/");
+  };
 
   // If role is ADMIN, don't render the Navbar
   if (role === "ADMIN") return null;
@@ -115,7 +125,11 @@ function Navbar() {
             >
               <div className="relative">
                 <FaShoppingCart className="text-xl" />
-                
+                {cartQuantity > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                    {cartQuantity}
+                  </span>
+                )}
               </div>
               <span>Cart</span>
             </button>
@@ -128,38 +142,38 @@ function Navbar() {
 
       {/* Responsive Menu for Smaller Screens */}
       {menuOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex justify-center items-center">
-  <div className="relative bg-white w-4/5 h-4/5 md:w-1/2 md:h-3/4 rounded-lg shadow-lg overflow-hidden">
-    <button className="absolute top-4 right-4 text-gray-700" onClick={toggleMenu}>
-      <FaTimes className="text-3xl hover:text-red-500 transition duration-200" />
-    </button>
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        <span className="text-red-500">Quick</span> Menu
-      </h2>
-      <ul className="space-y-6">
-        <li>
-          <Link href="/main/profile" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
-            <FaUser className="mr-4 text-xl" /> Outlet Information
-          </Link>
-        </li>
-        <li>
-          <Link href="/main/payments" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
-            <FaWallet className="mr-4 text-xl" /> Payment Settlement
-          </Link>
-        </li>
-        <li>
-          <Link href="/main/orders" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
-            <FaHistory className="mr-4 text-xl" /> Order History
-          </Link>
-        </li>
-        <li>
-          <Link href="/main/schedule" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
-          <MdSchedule className="mr-4 text-xl" />Daily Orders
-          </Link>
-        </li>
-        <li>
-          <button
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex justify-center items-center">
+          <div className="relative bg-white w-4/5 h-4/5 md:w-1/2 md:h-3/4 rounded-lg shadow-lg overflow-hidden">
+            <button className="absolute top-4 right-4 text-gray-700" onClick={toggleMenu}>
+              <FaTimes className="text-3xl hover:text-red-500 transition duration-200" />
+            </button>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                <span className="text-red-500">Quick</span> Menu
+              </h2>
+              <ul className="space-y-6">
+                <li>
+                  <Link href="/main/profile" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+                    <FaUser className="mr-4 text-xl" /> Outlet Information
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/main/payments" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+                    <FaWallet className="mr-4 text-xl" /> Payment Settlement
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/main/orders" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+                    <FaHistory className="mr-4 text-xl" /> Order History
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/main/schedule" className="flex items-center text-gray-700 hover:text-red-500" onClick={toggleMenu}>
+                    <MdSchedule className="mr-4 text-xl" /> Daily Orders
+                  </Link>
+                </li>
+                <li>
+                  <button
             className="flex items-center text-gray-700 hover:text-red-500 w-full text-left"
             onClick={() => {
               Cookies.remove("userData");
