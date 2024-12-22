@@ -3,11 +3,7 @@ import React, { useEffect } from 'react';
 import "../styles/global.css";
 import { AiOutlineUser } from 'react-icons/ai';
 
-
-
-const Page = () => { // Capitalize the component name
-
-
+const Page = () => {
   const stats = [
     { label: "Restaurants Served", value: "5,000+" },
     { label: "Products Delivered", value: "1M+" },
@@ -44,9 +40,12 @@ const Page = () => { // Capitalize the component name
             Orman provides a one-stop solution for sourcing high-quality products
             with a focus on sustainability and efficiency.
           </p>
-          <button className="bg-white text-blue-500 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100">
-            Learn More
-          </button>
+          <a
+            href="/main"
+            className="bg-white text-blue-500 font-semibold px-6 py-3 rounded shadow hover:bg-gray-100"
+          >
+            Shop Now
+          </a>
         </div>
       </section>
 
