@@ -1,21 +1,19 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./redux/store";
-import Cookies from 'js-cookie';
-import { setUserData } from './redux/slices/userSlice';
-import { setRestaurantDetails } from './redux/slices/restaurantSlice';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
+import { setUserData } from "./redux/slices/userSlice";
+import { setRestaurantDetails } from "./redux/slices/restaurantSlice";
+import { useRouter } from "next/navigation";
 
-// Separate component for the layout content
-function LayoutContent({ children }) {
+function LayoutContent({ children, isLoggedIn, setIsLoggedIn, loginRole, setLoginRole }) {
   const dispatch = useDispatch();
   const router = useRouter();
 
-useEffect(() => {
+  useEffect(() => {
     const userData = Cookies.get("userData") ? JSON.parse(Cookies.get("userData")) : null;
     const restaurantData = Cookies.get("restaurantData") ? JSON.parse(Cookies.get("restaurantData")) : {};
 
@@ -39,7 +37,7 @@ useEffect(() => {
 
   return (
     <>
-      <Navbar isLoggedIn={true} />
+      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} loginRole={loginRole} />
       <div className="min-h-screen">{children}</div>
       <Footer />
     </>
@@ -47,12 +45,21 @@ useEffect(() => {
 }
 
 export default function RootLayout({ children }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginRole, setLoginRole] = useState(null);
+
   return (
     <Provider store={store}>
       <html lang="en">
         <body>
-          {/* Render content only after Provider is available */}
-          <LayoutContent>{children}</LayoutContent>
+          <LayoutContent
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            loginRole={loginRole}
+            setLoginRole={setLoginRole}
+          >
+            {children}
+          </LayoutContent>
         </body>
       </html>
     </Provider>
