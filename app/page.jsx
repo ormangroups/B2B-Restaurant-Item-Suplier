@@ -78,23 +78,23 @@ const Page = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">Our Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                {/* Modernized icon */}
-                <div className="flex justify-center mb-4">
-                  <AiOutlineUser size={48} className="text-red-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
-                <p className="text-gray-600">{member.role}</p>
-              </div>
-            ))}
+       <section className="py-16 bg-white">
+  <div className="container mx-auto text-center">
+    <h2 className="text-3xl font-bold mb-8 text-gray-800">Our Team</h2>
+    <div className="flex flex-wrap justify-center gap-8">
+      {teamMembers.map((member, index) => (
+        <div key={index} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
+          {/* Modernized icon */}
+          <div className="flex justify-center mb-4">
+            <AiOutlineUser size={48} className="text-red-600" />
           </div>
+          <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
+          <p className="text-gray-600">{member.role}</p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
     </div>
   );
 };
